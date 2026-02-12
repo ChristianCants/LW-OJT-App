@@ -34,9 +34,20 @@ export const customSignIn = async (username, password) => {
   return { data, error };
 };
 
-// Deprecated/Unused Supabase Auth functions (kept for reference if needed, but not used)
+
+// Admin Auth using Supabase Auth
+export const adminSignIn = async (email, password) => {
+  const { data, error } = await supabase.auth.signInWithPassword({
+    email,
+    password,
+  });
+  return { data, error };
+};
+
 export const signOut = async () => {
-  // For custom auth, "sign out" is just clearing local state, 
-  // but passing control back to the caller to handle that.
-  return { error: null };
+  // Sign out from Supabase (for admins)
+  const { error } = await supabase.auth.signOut();
+  // Also clear custom auth session
+  localStorage.removeItem('user');
+  return { error };
 };
