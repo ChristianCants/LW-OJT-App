@@ -6,6 +6,7 @@ import SignUp from './pages/SignUp';
 import UserDashboard from './pages/UserDashboard';
 import AdminSignIn from './pages/AdminSignIn';
 import AdminDashboard from './pages/AdminDashboard';
+import SecretRouteListener from './components/SecretRouteListener';
 
 
 function App() {
@@ -19,6 +20,7 @@ function App() {
         <Route path="/admin/signin" element={<AdminSignIn />} />
         <Route path="/admin/dashboard" element={<AdminDashboard />} />
       </Routes>
+      <SecretRouteListener />
     </Router>
   );
 }
