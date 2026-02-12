@@ -7,21 +7,24 @@ import UserDashboard from './pages/UserDashboard';
 import AdminSignIn from './pages/AdminSignIn';
 import AdminDashboard from './pages/AdminDashboard';
 import SecretRouteListener from './components/SecretRouteListener';
+import { ThemeProvider } from './context/ThemeContext';
 
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Navigate to="/signin" replace />} />
-        <Route path="/signin" element={<SignIn />} />
-        <Route path="/signup" element={<SignUp />} />
-        <Route path="/dashboard" element={<UserDashboard />} />
-        <Route path="/admin/signin" element={<AdminSignIn />} />
-        <Route path="/admin/dashboard" element={<AdminDashboard />} />
-      </Routes>
-      <SecretRouteListener />
-    </Router>
+    <ThemeProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<Navigate to="/signin" replace />} />
+          <Route path="/signin" element={<SignIn />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/dashboard" element={<UserDashboard />} />
+          <Route path="/admin/signin" element={<AdminSignIn />} />
+          <Route path="/admin/dashboard" element={<AdminDashboard />} />
+        </Routes>
+        <SecretRouteListener />
+      </Router>
+    </ThemeProvider>
   );
 }
 

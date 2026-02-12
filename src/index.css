@@ -1,24 +1,40 @@
 @import "tailwindcss";
 
 :root {
+  /* Default Light Theme */
+  --bg-primary: #F3F4F6;
+  --bg-secondary: #ffffff;
+  --bg-card: #ffffff;
+  --text-primary: #111827;
+  --text-secondary: #6B7280;
+  --accent-color: #00ff88;
+  --border-color: #e5e7eb;
+  --glass-bg: rgba(255, 255, 255, 0.7);
+  --glass-border: rgba(255, 255, 255, 0.2);
+
+  /* Shared */
   --primary-green: #00ff88;
   --secondary-green: #00cc6a;
-  --dark-bg: #0a0a0a;
+}
+
+[data-theme='dark'] {
+  --bg-primary: #0a0a0a;
+  --bg-secondary: #1f2937;
+  --bg-card: #1f2937;
+  --text-primary: #ffffff;
+  --text-secondary: #9CA3AF;
+  --border-color: #374151;
   --glass-bg: rgba(255, 255, 255, 0.05);
   --glass-border: rgba(255, 255, 255, 0.1);
-  --text-primary: #ffffff;
-  --text-secondary: #a0a0a0;
 }
 
 body {
   margin: 0;
   font-family: 'Inter', sans-serif;
-  background-color: var(--dark-bg);
+  background-color: var(--bg-primary);
   color: var(--text-primary);
   min-height: 100vh;
-  background-image:
-    radial-gradient(circle at 10% 20%, rgba(0, 255, 136, 0.1) 0%, transparent 40%),
-    radial-gradient(circle at 90% 80%, rgba(0, 204, 106, 0.1) 0%, transparent 40%);
+  transition: background-color 0.3s ease, color 0.3s ease;
 }
 
 .glass-card {
