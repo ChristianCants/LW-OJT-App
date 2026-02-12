@@ -1,6 +1,4 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import "tailwindcss";
 
 :root {
   --primary-green: #00ff88;
@@ -18,7 +16,7 @@ body {
   background-color: var(--dark-bg);
   color: var(--text-primary);
   min-height: 100vh;
-  background-image: 
+  background-image:
     radial-gradient(circle at 10% 20%, rgba(0, 255, 136, 0.1) 0%, transparent 40%),
     radial-gradient(circle at 90% 80%, rgba(0, 204, 106, 0.1) 0%, transparent 40%);
 }
@@ -81,6 +79,7 @@ body {
 
 .text-gradient {
   background: linear-gradient(135deg, #ffffff 0%, var(--primary-green) 100%);
+  background-clip: text;
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
