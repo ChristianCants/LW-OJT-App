@@ -69,12 +69,12 @@ const DashboardModule = ({ user }) => {
     });
 
     return (
-        <div className="h-full overflow-y-auto bg-gray-50 scrollbar-hide pb-6">
+        <div className="h-full overflow-y-auto scrollbar-hide pb-6">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Left Column - Main Content (2/3 width) */}
                 <div className="lg:col-span-2 space-y-4">
                     {/* Welcome Header */}
-                    <div className="bg-white rounded-3xl p-4 border border-gray-100">
+                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-4 border border-white/30 shadow-lg">
                         <div className="flex items-center justify-between mb-2">
                             <div>
                                 <h1 className="text-2xl font-bold text-gray-900">
@@ -94,7 +94,7 @@ const DashboardModule = ({ user }) => {
                     {/* Stats Cards Row */}
                     <div className="grid grid-cols-3 gap-4">
                         {/* Hours Spent */}
-                        <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                        <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-lg">
                             <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-3">
                                 <Award size={24} className="text-blue-500" />
                             </div>
@@ -103,7 +103,7 @@ const DashboardModule = ({ user }) => {
                         </div>
 
                         {/* Overall Result */}
-                        <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                        <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-lg">
                             <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-3">
                                 <Trophy size={24} className="text-yellow-500" />
                             </div>
@@ -112,7 +112,7 @@ const DashboardModule = ({ user }) => {
                         </div>
 
                         {/* Completed */}
-                        <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                        <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-lg">
                             <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-3">
                                 <CheckCircle2 size={24} className="text-purple-500" />
                             </div>
@@ -122,7 +122,7 @@ const DashboardModule = ({ user }) => {
                     </div>
 
                     {/* Homework Progress */}
-                    <div className="bg-white rounded-3xl p-4 border border-gray-100">
+                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-4 border border-white/30 shadow-lg">
                         <h2 className="text-lg font-bold text-gray-900 mb-4">Homework Progress</h2>
                         <div className="grid grid-cols-2 gap-8">
                             <CircularProgress
@@ -145,7 +145,7 @@ const DashboardModule = ({ user }) => {
                     </div>
 
                     {/* Course Statistics */}
-                    <div className="bg-white rounded-3xl p-4 border border-gray-100">
+                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-4 border border-white/30 shadow-lg">
                         <h2 className="text-lg font-bold text-gray-900 mb-4">Course Statistics</h2>
                         <div className="flex justify-center">
                             <DonutChart data={courseStatsData} size={160} strokeWidth={28} />
@@ -159,7 +159,7 @@ const DashboardModule = ({ user }) => {
                     <ProfileCard user={user} />
 
                     {/* Calendar */}
-                    <div className="bg-white rounded-3xl p-6 border border-gray-100">
+                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-lg">
                         <div className="flex items-center justify-between mb-4">
                             <button onClick={previousMonth} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
                                 <ChevronLeft size={20} className="text-gray-600" />
@@ -209,7 +209,7 @@ const DashboardModule = ({ user }) => {
                     </div>
 
                     {/* Upcoming Class */}
-                    <div className="bg-white rounded-3xl p-6 border border-gray-100">
+                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-lg">
                         <h2 className="text-lg font-bold text-gray-900 mb-4">Upcoming Class</h2>
                         <div className="space-y-3">
                             {upcomingClasses.map((classItem) => (

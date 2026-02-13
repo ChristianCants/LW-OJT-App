@@ -3,7 +3,7 @@ import { Edit } from 'lucide-react';
 
 const ProfileCard = ({ user }) => {
     return (
-        <div className="bg-white rounded-3xl p-6 border border-gray-100">
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-lg">
             <div className="flex items-start justify-between mb-4">
                 <h2 className="text-lg font-bold text-gray-900">My Profile</h2>
                 <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
