@@ -8,7 +8,7 @@ import AttendanceModule from '../components/admin/AttendanceModule';
 import TaskManagement from '../components/admin/TaskManagement';
 import CreateUser from '../components/admin/CreateUser';
 import AdminFloatingDock from '../components/AdminFloatingDock';
-import Particles from '../components/Particles';
+
 
 const AdminDashboard = () => {
     const navigate = useNavigate();
@@ -45,23 +45,8 @@ const AdminDashboard = () => {
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover"
                 >
-                    <source src="https://videos.pexels.com/video-files/10922866/10922866-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+                    <source src="https://www.pexels.com/download/video/10922866/" type="video/mp4" />
                 </video>
-                <div className="absolute inset-0">
-                    <Particles
-                        particleCount={800}
-                        particleSpread={17}
-                        speed={0.28}
-                        particleColors={['#ffffff', '#00d10e', '#dfd707', '#171717']}
-                        moveParticlesOnHover={false}
-                        particleHoverFactor={1}
-                        alphaParticles={false}
-                        particleBaseSize={100}
-                        sizeRandomness={1}
-                        cameraDistance={20}
-                        disableRotation={false}
-                    />
-                </div>
             </div>
             {/* Header */}
             <header className="h-16 bg-[var(--bg-secondary)] border-b border-[var(--border-color)] px-4 lg:px-8 flex items-center justify-between sticky top-0 z-30 relative">

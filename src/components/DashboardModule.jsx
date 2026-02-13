@@ -69,7 +69,7 @@ const DashboardModule = ({ user }) => {
     });
 
     return (
-        <div className="h-full overflow-y-auto bg-gray-50 scrollbar-hide pb-6">
+        <div className="h-full overflow-y-auto scrollbar-hide pb-6 rounded-2xl p-4" style={{ background: 'rgba(249, 250, 251, 0.85)', backdropFilter: 'blur(20px)' }}>
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
                 {/* Left Column - Main Content (2/3 width) */}
                 <div className="lg:col-span-2 space-y-4">

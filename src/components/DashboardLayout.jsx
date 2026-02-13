@@ -7,7 +7,7 @@ import {
     Sun,
 } from 'lucide-react';
 import FloatingDock from './FloatingDock';
-import Particles from './Particles';
+
 
 const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
     const { theme, toggleTheme } = useTheme();
@@ -24,27 +24,12 @@ const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
                     playsInline
                     className="absolute inset-0 w-full h-full object-cover"
                 >
-                    <source src="https://videos.pexels.com/video-files/10922866/10922866-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+                    <source src="https://www.pexels.com/download/video/10922866/" type="video/mp4" />
                 </video>
-                <div className="absolute inset-0">
-                    <Particles
-                        particleCount={800}
-                        particleSpread={17}
-                        speed={0.28}
-                        particleColors={['#ffffff', '#00d10e', '#dfd707', '#171717']}
-                        moveParticlesOnHover={false}
-                        particleHoverFactor={1}
-                        alphaParticles={false}
-                        particleBaseSize={100}
-                        sizeRandomness={1}
-                        cameraDistance={20}
-                        disableRotation={false}
-                    />
-                </div>
             </div>
 
             {/* Minimal Top Bar for Profile & Search */}
-            <header className="h-20 flex items-center justify-between px-6 lg:px-10 shrink-0 z-40">
+            <header className="h-20 flex items-center justify-between px-6 lg:px-10 shrink-0 z-40 relative">
                 {/* Logo / Brand */}
                 <div className="flex items-center gap-2">
                     <span className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">L</span>
@@ -90,7 +75,7 @@ const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
             </header>
 
             {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto scrollbar-hide px-6 lg:px-10 pb-28"> {/* Hidden scrollbar for Dock */}
+            <main className="flex-1 overflow-y-auto scrollbar-hide px-6 lg:px-10 pb-28 relative z-10"> {/* Hidden scrollbar for Dock */}
                 <div className="max-w-7xl mx-auto h-full">
                     {children}
                 </div>
