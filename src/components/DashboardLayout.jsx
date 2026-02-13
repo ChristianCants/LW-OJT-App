@@ -61,7 +61,7 @@ const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
             </header>
 
             {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto px-6 lg:px-10 pb-32"> {/* Large bottom padding for Dock */}
+            <main className="flex-1 overflow-y-auto scrollbar-hide px-6 lg:px-10 pb-28"> {/* Hidden scrollbar for Dock */}
                 <div className="max-w-7xl mx-auto h-full">
                     {children}
                 </div>

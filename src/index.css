@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Hide scrollbar globally but keep scroll functionality */
+* {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+*::-webkit-scrollbar {
+  display: none;
+}
+
 :root {
   /* Default Light Theme */
   --bg-primary: #F3F4F6;

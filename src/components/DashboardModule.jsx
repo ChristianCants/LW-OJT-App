@@ -2,70 +2,43 @@ import React, { useState } from 'react';
 import {
     ChevronLeft,
     ChevronRight,
-    BookOpen,
     Award,
-    Clock,
-    CheckCircle,
-    Globe,
-    Megaphone,
-    Database,
-    Layout,
-    FileText,
-    Mic
+    Trophy,
+    CheckCircle2,
+    Bell,
+    Video
 } from 'lucide-react';
-
-// Mock data - will use existing activity data
-const mockCourses = [
-    {
-        id: 1,
-        name: "Product Management",
-        instructor: "Prof. Linda Cruz",
-        icon: Layout,
-        color: "bg-purple-100",
-        iconColor: "text-purple-500",
-        lessonsLeft: 2,
-        completed: 80,
-        lessons: 10
-    },
-    {
-        id: 2,
-        name: "Advanced Geography",
-        instructor: "Prof. Linda Cruz",
-        icon: Globe,
-        color: "bg-blue-100",
-        iconColor: "text-blue-500",
-        lessonsLeft: 3,
-        completed: 65,
-        lessons: 12,
-        featured: true
-    },
-    {
-        id: 3,
-        name: "Mass Communication",
-        instructor: "Prof. Jonathan Reyes",
-        icon: Megaphone,
-        color: "bg-pink-100",
-        iconColor: "text-pink-500",
-        lessonsLeft: 3,
-        completed: 45,
-        lessons: 8
-    },
-];
-
-const mockAchievements = [
-    { id: 1, name: "Inorganic Chemistry Certificate", color: "bg-yellow-50", borderColor: "border-yellow-200", textColor: "text-yellow-600", buttonColor: "bg-yellow-500" },
-    { id: 2, name: "Social Philosophy Certificate", color: "bg-purple-50", borderColor: "border-purple-200", textColor: "text-purple-600", buttonColor: "bg-purple-500" },
-];
-
-const mockTasks = [
-    { id: 1, title: "Demo Speech", course: "Mass Communication", icon: Mic, color: "bg-pink-50", iconColor: "text-pink-500", type: "TODAY" },
-    { id: 2, title: "Globalization Essay", course: "Advanced Geography", icon: FileText, color: "bg-orange-50", iconColor: "text-orange-500", type: "TODAY" },
-    { id: 3, title: "Management Quiz", course: "Product Management", icon: Clock, color: "bg-purple-50", iconColor: "text-purple-500", type: "THIS WEEK" },
-    { id: 4, title: "Docu Reaction Paper", course: "Advanced Geography", icon: FileText, color: "bg-orange-50", iconColor: "text-orange-500", type: "THIS WEEK" },
-];
+import CircularProgress from './CircularProgress';
+import DonutChart from './DonutChart';
+import TimeSpendingsChart from './TimeSpendingsChart';
+import ProfileCard from './ProfileCard';
 
 const DashboardModule = ({ user }) => {
     const [currentMonth, setCurrentMonth] = useState(new Date());
+
+    // Mock data
+    const weeklyTimeData = [0, 120, 180, 500, 240, 150, 0]; // Minutes per day
+
+    const courseStatsData = [
+        { label: 'Incomplete', value: 40, color: '#ef4444' },
+        { label: 'Completed', value: 30, color: '#3b82f6' },
+        { label: 'In progress', value: 20, color: '#06b6d4' }
+    ];
+
+    const upcomingClasses = [
+        {
+            id: 1,
+            title: 'User Experience Design',
+            time: '8:30',
+            platform: 'Online - Zoom Meeting'
+        },
+        {
+            id: 2,
+            title: 'User Interface Design',
+            time: '9:30',
+            platform: 'Online - Zoom Meeting'
+        }
+    ];
 
     // Calendar logic
     const getDaysInMonth = (date) => {
@@ -77,7 +50,7 @@ const DashboardModule = ({ user }) => {
     };
 
     const { firstDay, daysInMonth } = getDaysInMonth(currentMonth);
-    const monthName = currentMonth.toLocaleString('default', { month: 'long' });
+    const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
 
     const previousMonth = () => {
         setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
@@ -87,147 +60,144 @@ const DashboardModule = ({ user }) => {
         setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
     };
 
+    // Get current date
+    const today = new Date();
+    const formattedDate = today.toLocaleDateString('en-US', {
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric'
+    });
+
     return (
-        <div className="h-full overflow-y-auto pb-8">
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                {/* Left Column - Main Content */}
-                <div className="lg:col-span-2 space-y-6">
-                    {/* Welcome Banner */}
-                    <div
-                        className="p-8 rounded-3xl relative overflow-hidden"
-                        style={{
-                            background: 'linear-gradient(135deg, #2563eb 0%, #3b82f6 100%)',
-                        }}
-                    >
-                        <div className="relative z-10">
-                            <p className="text-white/80 text-sm mb-2">April 30, Tuesday</p>
-                            <h1 className="text-3xl font-bold text-white mb-2">
-                                Welcome back, {user?.username || 'Diane'}!
-                            </h1>
-                            <p className="text-white/90 text-sm">
-                                You've finished <span className="font-bold">85%</span> of your weekly goal!
-                            </p>
-                        </div>
-
-                        {/* Illustration */}
-                        <div className="absolute right-8 bottom-0 opacity-20">
-                            <Award size={120} className="text-white" />
+        <div className="h-full overflow-y-auto bg-gray-50 scrollbar-hide pb-6">
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                {/* Left Column - Main Content (2/3 width) */}
+                <div className="lg:col-span-2 space-y-4">
+                    {/* Welcome Header */}
+                    <div className="bg-white rounded-3xl p-4 border border-gray-100">
+                        <div className="flex items-center justify-between mb-2">
+                            <div>
+                                <h1 className="text-2xl font-bold text-gray-900">
+                                    Welcome Back, {user?.username || 'Royal'}!
+                                </h1>
+                                <p className="text-sm text-gray-500 mt-1">{formattedDate}</p>
+                            </div>
+                            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
+                                <Bell size={20} className="text-gray-600" />
+                            </button>
                         </div>
                     </div>
 
-                    {/* My Courses */}
-                    <div>
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">My Courses</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                            {mockCourses.map((course) => {
-                                const Icon = course.icon;
-                                return (
-                                    <div
-                                        key={course.id}
-                                        className={`p-6 rounded-2xl ${course.color} ${course.featured ? 'ring-2 ring-blue-400' : ''} transition-all hover:scale-105 cursor-pointer`}
-                                    >
-                                        <div className={`w-16 h-16 rounded-2xl ${course.color} flex items-center justify-center mb-4`}>
-                                            <Icon size={32} className={course.iconColor} strokeWidth={1.5} />
-                                        </div>
+                    {/* Time Spendings Chart */}
+                    <TimeSpendingsChart weeklyData={weeklyTimeData} />
 
-                                        <h3 className="font-bold text-gray-900 mb-1">{course.name}</h3>
-                                        <p className="text-xs text-gray-600 mb-4">{course.instructor}</p>
+                    {/* Stats Cards Row */}
+                    <div className="grid grid-cols-3 gap-4">
+                        {/* Hours Spent */}
+                        <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-3">
+                                <Award size={24} className="text-blue-500" />
+                            </div>
+                            <p className="text-sm text-gray-500 mb-1">Hours Spent</p>
+                            <p className="text-3xl font-bold text-gray-900">42</p>
+                        </div>
 
-                                        {/* Progress Bar */}
-                                        <div className="mb-3">
-                                            <div className="flex justify-between text-xs mb-1">
-                                                <span className="text-gray-600">Lessons left: {course.lessonsLeft}</span>
-                                                <span className="font-bold text-gray-900">Completed: {course.completed}%</span>
-                                            </div>
-                                            <div className="w-full bg-white/50 rounded-full h-2">
-                                                <div
-                                                    className={`h-2 rounded-full ${course.iconColor.replace('text-', 'bg-')}`}
-                                                    style={{ width: `${course.completed}%` }}
-                                                />
-                                            </div>
-                                        </div>
-                                    </div>
-                                );
-                            })}
+                        {/* Overall Result */}
+                        <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-3">
+                                <Trophy size={24} className="text-yellow-500" />
+                            </div>
+                            <p className="text-sm text-gray-500 mb-1">Overall Result</p>
+                            <p className="text-3xl font-bold text-gray-900">220</p>
+                        </div>
+
+                        {/* Completed */}
+                        <div className="bg-white rounded-2xl p-5 border border-gray-100">
+                            <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-3">
+                                <CheckCircle2 size={24} className="text-purple-500" />
+                            </div>
+                            <p className="text-sm text-gray-500 mb-1">Completed</p>
+                            <p className="text-3xl font-bold text-gray-900">20</p>
                         </div>
                     </div>
 
-                    {/* Achievements */}
-                    <div>
-                        <h2 className="text-xl font-bold text-gray-900 mb-4">Achievements</h2>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            {mockAchievements.map((achievement) => (
-                                <div
-                                    key={achievement.id}
-                                    className={`p-6 rounded-2xl ${achievement.color} border-2 ${achievement.borderColor} flex items-center justify-between`}
-                                >
-                                    <div className="flex items-center gap-4">
-                                        <Award size={40} className={achievement.textColor} strokeWidth={1.5} />
-                                        <div>
-                                            <h3 className={`font-bold ${achievement.textColor}`}>
-                                                {achievement.name}
-                                            </h3>
-                                        </div>
-                                    </div>
-                                    <button className={`px-6 py-2 ${achievement.buttonColor} text-white rounded-xl font-semibold text-sm hover:opacity-90 transition-opacity`}>
-                                        View
-                                    </button>
-                                </div>
-                            ))}
+                    {/* Homework Progress */}
+                    <div className="bg-white rounded-3xl p-4 border border-gray-100">
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">Homework Progress</h2>
+                        <div className="grid grid-cols-2 gap-8">
+                            <CircularProgress
+                                percentage={92}
+                                size={110}
+                                strokeWidth={8}
+                                color="#3b82f6"
+                                label="User experience Design"
+                                taskCount={12}
+                            />
+                            <CircularProgress
+                                percentage={52}
+                                size={110}
+                                strokeWidth={8}
+                                color="#8b5cf6"
+                                label="User experience Design"
+                                taskCount={12}
+                            />
+                        </div>
+                    </div>
+
+                    {/* Course Statistics */}
+                    <div className="bg-white rounded-3xl p-4 border border-gray-100">
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">Course Statistics</h2>
+                        <div className="flex justify-center">
+                            <DonutChart data={courseStatsData} size={160} strokeWidth={28} />
                         </div>
                     </div>
                 </div>
 
-                {/* Right Column - Schedule & Tasks */}
-                <div className="space-y-6">
-                    {/* My Schedule Calendar */}
-                    <div
-                        className="p-6 rounded-2xl"
-                        style={{
-                            background: 'rgba(255, 255, 255, 0.6)',
-                            backdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(0, 0, 0, 0.05)',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
-                        }}
-                    >
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">My Schedule</h2>
+                {/* Right Column - Sidebar (1/3 width) */}
+                <div className="space-y-4">
+                    {/* Profile Card */}
+                    <ProfileCard user={user} />
 
-                        {/* Calendar Header */}
+                    {/* Calendar */}
+                    <div className="bg-white rounded-3xl p-6 border border-gray-100">
                         <div className="flex items-center justify-between mb-4">
                             <button onClick={previousMonth} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
                                 <ChevronLeft size={20} className="text-gray-600" />
                             </button>
-                            <span className="font-semibold text-gray-900">{monthName}</span>
+                            <h3 className="text-sm font-bold text-gray-900">{monthName}</h3>
                             <button onClick={nextMonth} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
                                 <ChevronRight size={20} className="text-gray-600" />
                             </button>
                         </div>
 
                         {/* Calendar Grid */}
-                        <div className="grid grid-cols-7 gap-2 text-center">
-                            {['M', 'T', 'W', 'T', 'F', 'S', 'S'].map((day, i) => (
-                                <div key={i} className="text-xs font-semibold text-gray-500 pb-2">
+                        <div className="grid grid-cols-7 gap-1 text-center">
+                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
+                                <div key={i} className="text-xs font-semibold text-gray-400 pb-2">
                                     {day}
                                 </div>
                             ))}
 
                             {/* Empty cells for days before month starts */}
-                            {Array.from({ length: firstDay === 0 ? 6 : firstDay - 1 }).map((_, i) => (
+                            {Array.from({ length: firstDay }).map((_, i) => (
                                 <div key={`empty-${i}`} />
                             ))}
 
                             {/* Days of the month */}
                             {Array.from({ length: daysInMonth }).map((_, i) => {
                                 const day = i + 1;
-                                const isToday = day === 11; // Mock today as 11th
+                                const isToday = day === 12; // Mock today as 12th
+                                const isSelected = [12, 12, 12, 12, 12].includes(day); // Multiple selected days
                                 return (
                                     <div
                                         key={day}
                                         className={`
                                             aspect-square flex items-center justify-center rounded-lg text-sm font-medium cursor-pointer transition-all
                                             ${isToday
-                                                ? 'bg-blue-500 text-white'
-                                                : 'text-gray-700 hover:bg-gray-100'
+                                                ? 'bg-blue-500 text-white shadow-lg'
+                                                : isSelected
+                                                    ? 'bg-blue-100 text-blue-600'
+                                                    : 'text-gray-700 hover:bg-gray-100'
                                             }
                                         `}
                                     >
@@ -238,69 +208,31 @@ const DashboardModule = ({ user }) => {
                         </div>
                     </div>
 
-                    {/* Upcoming Tasks */}
-                    <div
-                        className="p-6 rounded-2xl"
-                        style={{
-                            background: 'rgba(255, 255, 255, 0.6)',
-                            backdropFilter: 'blur(20px)',
-                            border: '1px solid rgba(0, 0, 0, 0.05)',
-                            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.04)'
-                        }}
-                    >
-                        <div className="flex items-center justify-between mb-4">
-                            <h2 className="text-lg font-bold text-gray-900">Upcoming Tasks</h2>
-                            <button className="text-sm text-blue-500 font-semibold hover:text-blue-600">
-                                See All
-                            </button>
-                        </div>
-
-                        <div className="space-y-4">
-                            {/* TODAY Section */}
-                            <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">TODAY</p>
-                                {mockTasks.filter(t => t.type === 'TODAY').map((task) => {
-                                    const Icon = task.icon;
-                                    return (
-                                        <div
-                                            key={task.id}
-                                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors mb-2"
-                                        >
-                                            <div className={`w-10 h-10 rounded-xl ${task.color} flex items-center justify-center`}>
-                                                <Icon size={18} className={task.iconColor} strokeWidth={1.5} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <h3 className="font-semibold text-gray-900 text-sm">{task.title}</h3>
-                                                <p className="text-xs text-gray-500">{task.course}</p>
-                                            </div>
-                                            <ChevronRight size={18} className="text-gray-400" />
+                    {/* Upcoming Class */}
+                    <div className="bg-white rounded-3xl p-6 border border-gray-100">
+                        <h2 className="text-lg font-bold text-gray-900 mb-4">Upcoming Class</h2>
+                        <div className="space-y-3">
+                            {upcomingClasses.map((classItem) => (
+                                <div
+                                    key={classItem.id}
+                                    className="p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer"
+                                >
+                                    <div className="flex items-start gap-3">
+                                        <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
+                                            <Video size={20} className="text-white" />
                                         </div>
-                                    );
-                                })}
-                            </div>
-
-                            {/* THIS WEEK Section */}
-                            <div>
-                                <p className="text-xs font-bold text-gray-400 uppercase tracking-wide mb-2">THIS WEEK</p>
-                                {mockTasks.filter(t => t.type === 'THIS WEEK').map((task) => {
-                                    const Icon = task.icon;
-                                    return (
-                                        <div
-                                            key={task.id}
-                                            className="flex items-center gap-3 p-3 rounded-xl hover:bg-gray-50 cursor-pointer transition-colors mb-2"
-                                        >
-                                            <div className={`w-10 h-10 rounded-xl ${task.color} flex items-center justify-center`}>
-                                                <Icon size={18} className={task.iconColor} strokeWidth={1.5} />
-                                            </div>
-                                            <div className="flex-1">
-                                                <h3 className="font-semibold text-gray-900 text-sm">{task.title}</h3>
-                                                <p className="text-xs text-gray-500">{task.course}</p>
-                                            </div>
-                                            <ChevronRight size={18} className="text-gray-400" />
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold text-gray-900 mb-1">
+                                                {classItem.time}
+                                            </p>
+                                            <h3 className="text-sm font-semibold text-gray-900 mb-1">
+                                                {classItem.title}
+                                            </h3>
+                                            <p className="text-xs text-gray-500">{classItem.platform}</p>
                                         </div>
-                                    );
-                                })}
-                            </div>
+                                    </div>
+                                </div>
+                            ))}
                         </div>
                     </div>
                 </div>
