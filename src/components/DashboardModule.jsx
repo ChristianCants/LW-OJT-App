@@ -1,245 +1,360 @@
-import React, { useState } from 'react';
+import React from 'react';
 import {
+    ArrowUpRight,
+    AlertTriangle,
+    Zap,
+    Leaf,
+    TrendingUp,
+    Clock,
+    BarChart3,
+    Activity,
     ChevronLeft,
     ChevronRight,
-    Award,
-    Trophy,
-    CheckCircle2,
-    Bell,
-    Video
 } from 'lucide-react';
-import CircularProgress from './CircularProgress';
-import DonutChart from './DonutChart';
-import TimeSpendingsChart from './TimeSpendingsChart';
-import ProfileCard from './ProfileCard';
 
-const DashboardModule = ({ user }) => {
-    const [currentMonth, setCurrentMonth] = useState(new Date());
+/* ─── Calendar Widget ───────────────────────────────────────── */
+const CalendarWidget = () => {
+    const [currentDate, setCurrentDate] = React.useState(new Date());
 
-    // Mock data
-    const weeklyTimeData = [0, 120, 180, 500, 240, 150, 0]; // Minutes per day
+    const daysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
+    const firstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
 
-    const courseStatsData = [
-        { label: 'Incomplete', value: 40, color: '#ef4444' },
-        { label: 'Completed', value: 30, color: '#3b82f6' },
-        { label: 'In progress', value: 20, color: '#06b6d4' }
-    ];
+    const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+    const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
 
-    const upcomingClasses = [
-        {
-            id: 1,
-            title: 'User Experience Design',
-            time: '8:30',
-            platform: 'Online - Zoom Meeting'
-        },
-        {
-            id: 2,
-            title: 'User Interface Design',
-            time: '9:30',
-            platform: 'Online - Zoom Meeting'
-        }
-    ];
+    const monthNames = ["January", "February", "March", "April", "May", "June",
+        "July", "August", "September", "October", "November", "December"];
 
-    // Calendar logic
-    const getDaysInMonth = (date) => {
-        const year = date.getFullYear();
-        const month = date.getMonth();
-        const firstDay = new Date(year, month, 1).getDay();
-        const daysInMonth = new Date(year, month + 1, 0).getDate();
-        return { firstDay, daysInMonth };
-    };
-
-    const { firstDay, daysInMonth } = getDaysInMonth(currentMonth);
-    const monthName = currentMonth.toLocaleString('default', { month: 'long', year: 'numeric' });
-
-    const previousMonth = () => {
-        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() - 1));
-    };
-
-    const nextMonth = () => {
-        setCurrentMonth(new Date(currentMonth.getFullYear(), currentMonth.getMonth() + 1));
-    };
-
-    // Get current date
     const today = new Date();
-    const formattedDate = today.toLocaleDateString('en-US', {
-        day: '2-digit',
-        month: 'long',
-        year: 'numeric'
-    });
+    const isToday = (day) => {
+        return day === today.getDate() &&
+            currentDate.getMonth() === today.getMonth() &&
+            currentDate.getFullYear() === today.getFullYear();
+    };
+
+    const days = [];
+    const emptyDays = firstDayOfMonth(currentDate);
+    const totalDays = daysInMonth(currentDate);
+
+    for (let i = 0; i < emptyDays; i++) days.push(null);
+    for (let i = 1; i <= totalDays; i++) days.push(i);
 
     return (
-<<<<<<< HEAD
-        <div className="h-full overflow-y-auto scrollbar-hide pb-6 rounded-2xl p-4" style={{ background: 'rgba(249, 250, 251, 0.85)', backdropFilter: 'blur(20px)' }}>
-=======
-        <div className="h-full overflow-y-auto scrollbar-hide pb-6">
->>>>>>> 9dc2093bbea80e69059b0bf23f69632eecc5d2c7
-            <div className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-                {/* Left Column - Main Content (2/3 width) */}
-                <div className="lg:col-span-2 space-y-4">
-                    {/* Welcome Header */}
-                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-4 border border-white/30 shadow-lg">
-                        <div className="flex items-center justify-between mb-2">
+        <div className="flex flex-col h-full w-full px-4 py-2">
+            <div className="flex items-center justify-between mb-6">
+                <div>
+                    <span className="block text-sm font-bold text-gray-400 uppercase tracking-wider">Schedule</span>
+                    <span className="text-3xl font-black text-gray-900 tracking-tight leading-tight">
+                        {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
+                    </span>
+                </div>
+                <div className="flex gap-2">
+                    <button onClick={prevMonth} className="p-2 rounded-full hover:bg-black/5 transition-colors text-gray-600 border border-transparent hover:border-black/5">
+                        <ChevronLeft size={20} />
+                    </button>
+                    <button onClick={nextMonth} className="p-2 rounded-full hover:bg-black/5 transition-colors text-gray-600 border border-transparent hover:border-black/5">
+                        <ChevronRight size={20} />
+                    </button>
+                </div>
+            </div>
+
+            <div className="grid grid-cols-7 mb-4">
+                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
+                    <div key={d} className="text-center text-xs font-black text-gray-400 uppercase tracking-wider">
+                        {d}
+                    </div>
+                ))}
+            </div>
+
+            <div className="grid grid-cols-7 gap-2 flex-1 auto-rows-fr">
+                {days.map((day, i) => (
+                    <div
+                        key={i}
+                        className={`
+                            relative flex items-center justify-center rounded-xl text-lg font-bold transition-all duration-300 w-full h-full
+                            ${!day ? '' : 'hover:bg-white/60 hover:shadow-sm cursor-pointer border border-transparent hover:border-white/50'} 
+                            ${day && isToday(day) ? '!bg-[#c8ff00] !text-gray-900 shadow-sm scale-105' : 'text-gray-600'}
+                            ${!day ? 'invisible' : ''}
+                        `}
+                    >
+                        {day}
+                        {/* Example Event Dot */}
+                        {day === 15 && currentDate.getMonth() === 1 && (
+                            <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-orange-500 shadow-sm" />
+                        )}
+                        {day === 24 && currentDate.getMonth() === 1 && (
+                            <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-blue-500 shadow-sm" />
+                        )}
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
+/* ─── Glass Card ────────────────────────────────────────────── */
+const GlassCard = ({ children, className = '' }) => (
+    <div
+        className={`rounded-3xl p-6 ${className}`}
+        style={{
+            background: 'rgba(245, 243, 238, 0.9)',
+            backdropFilter: 'blur(40px)',
+            border: '1px solid rgba(255,255,255,0.6)',
+            boxShadow: '0 12px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)',
+        }}
+    >
+        {children}
+    </div>
+);
+
+/* ─── Donut Chart ───────────────────────────────────────────── */
+const DonutChart = ({ percentage, size = 110, strokeWidth = 10, color = '#e8a030' }) => {
+    const radius = (size - strokeWidth) / 2;
+    const circumference = 2 * Math.PI * radius;
+    const offset = circumference - (percentage / 100) * circumference;
+    const center = size / 2;
+
+    return (
+        <div className="relative" style={{ width: size, height: size }}>
+            <svg width={size} height={size} className="transform -rotate-90">
+                <circle cx={center} cy={center} r={radius} stroke="rgba(0,0,0,0.06)" strokeWidth={strokeWidth} fill="none" />
+                <circle
+                    cx={center} cy={center} r={radius}
+                    stroke={color} strokeWidth={strokeWidth} fill="none"
+                    strokeDasharray={circumference} strokeDashoffset={offset}
+                    strokeLinecap="round"
+                    style={{ transition: 'stroke-dashoffset 1.2s ease-out' }}
+                />
+            </svg>
+            <div className="absolute inset-0 flex flex-col items-center justify-center">
+                <span className="text-2xl font-black text-gray-900">{percentage}%</span>
+            </div>
+        </div>
+    );
+};
+
+/* ─── Gauge Arc ─────────────────────────────────────────────── */
+const GaugeArc = ({ value, max = 100, size = 140, color = '#e8a030' }) => {
+    const pct = value / max;
+    const radius = (size - 12) / 2;
+    const startAngle = -220;
+    const endAngle = 40;
+    const totalAngle = endAngle - startAngle;
+    const valueAngle = startAngle + totalAngle * pct;
+
+    const polarToCart = (cx, cy, r, angle) => {
+        const rad = (angle * Math.PI) / 180;
+        return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+    };
+
+    const center = size / 2;
+    const bgStart = polarToCart(center, center, radius, startAngle);
+    const bgEnd = polarToCart(center, center, radius, endAngle);
+    const valEnd = polarToCart(center, center, radius, valueAngle);
+
+    const bgArc = `M ${bgStart.x} ${bgStart.y} A ${radius} ${radius} 0 1 1 ${bgEnd.x} ${bgEnd.y}`;
+    const valArc = `M ${bgStart.x} ${bgStart.y} A ${radius} ${radius} 0 ${pct > 0.5 ? 1 : 0} 1 ${valEnd.x} ${valEnd.y}`;
+
+    return (
+        <div className="relative flex justify-center" style={{ width: '100%', height: size * 0.65 }}>
+            <svg width={size} height={size} style={{ marginTop: -size * 0.18 }}>
+                <path d={bgArc} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="10" strokeLinecap="round" />
+                <path d={valArc} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" />
+            </svg>
+            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
+                <span className="text-2xl font-black text-gray-900">{value}</span>
+                <span className="text-sm text-gray-500 font-bold">/{max}</span>
+            </div>
+        </div>
+    );
+};
+
+/* ─── Mini Bar Graph ────────────────────────────────────────── */
+const MiniBarGraph = ({ data, highlight = -1, height = 64 }) => {
+    const max = Math.max(...data);
+    return (
+        <div className="flex items-end gap-1 w-full" style={{ height }}>
+            {data.map((val, i) => (
+                <div
+                    key={i}
+                    className="flex-1 rounded-t-lg transition-all duration-500"
+                    style={{
+                        height: `${(val / max) * 100}%`,
+                        minHeight: '4px',
+                        background: i === highlight ? '#e8a030' : 'rgba(0,0,0,0.08)',
+                    }}
+                />
+            ))}
+        </div>
+    );
+};
+
+/* ─── Main Dashboard Module ─────────────────────────────────── */
+const DashboardModule = ({ user }) => {
+    const weeklyData = [65, 72, 80, 88, 75, 82, 90, 68, 85, 92, 78, 70];
+
+    return (
+        <div className="w-full flex flex-col gap-8 py-6 pb-20">
+
+            {/* ─── TOP SECTION ─────────────────────────────── */}
+            <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+                {/* ── LEFT COLUMN ──────────────────────── */}
+                <div className="lg:col-span-4 flex flex-col gap-6">
+
+                    {/* Page Title */}
+                    <div className="pl-1">
+                        <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-none tracking-tighter drop-shadow-sm">
+                            Training Hub
+                        </h1>
+                        <p className="text-sm text-gray-600 mt-2 leading-relaxed font-semibold max-w-[280px]">
+                            Welcome back, <span className="text-gray-900 font-black">{user?.username || 'Intern'}</span>.
+                        </p>
+                    </div>
+
+                    {/* Card: Hours Logged */}
+                    <GlassCard className="flex-1 flex flex-col justify-center min-h-[160px]">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs text-gray-600 font-bold uppercase tracking-wide">Hours Logged</span>
+                            <ArrowUpRight size={18} className="text-gray-400" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shadow-sm">
+                                <Clock size={24} className="text-orange-500" />
+                            </div>
                             <div>
-                                <h1 className="text-2xl font-bold text-gray-900">
-                                    Welcome Back, {user?.username || 'Royal'}!
-                                </h1>
-                                <p className="text-sm text-gray-500 mt-1">{formattedDate}</p>
+                                <span className="text-4xl font-black text-gray-900 leading-none">127.5</span>
+                                <span className="text-sm text-gray-500 font-bold ml-1">hrs</span>
                             </div>
-                            <button className="p-2 hover:bg-gray-100 rounded-lg transition-colors">
-                                <Bell size={20} className="text-gray-600" />
-                            </button>
                         </div>
-                    </div>
+                        <p className="text-[10px] text-gray-500 mt-3 font-bold uppercase tracking-wider">February 2026</p>
+                    </GlassCard>
 
-                    {/* Time Spendings Chart */}
-                    <TimeSpendingsChart weeklyData={weeklyTimeData} />
-
-                    {/* Stats Cards Row */}
-                    <div className="grid grid-cols-3 gap-4">
-                        {/* Hours Spent */}
-                        <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-lg">
-                            <div className="w-12 h-12 rounded-xl bg-blue-50 flex items-center justify-center mb-3">
-                                <Award size={24} className="text-blue-500" />
+                    {/* Card: Tasks Done */}
+                    <GlassCard className="flex-1 flex flex-col justify-center min-h-[160px]">
+                        <div className="flex items-center justify-between mb-3">
+                            <span className="text-xs text-gray-600 font-bold uppercase tracking-wide">Tasks Done</span>
+                            <ArrowUpRight size={18} className="text-gray-400" />
+                        </div>
+                        <div className="flex items-center gap-4">
+                            <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center shadow-sm">
+                                <Leaf size={24} className="text-green-500" />
                             </div>
-                            <p className="text-sm text-gray-500 mb-1">Hours Spent</p>
-                            <p className="text-3xl font-bold text-gray-900">42</p>
-                        </div>
-
-                        {/* Overall Result */}
-                        <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-lg">
-                            <div className="w-12 h-12 rounded-xl bg-yellow-50 flex items-center justify-center mb-3">
-                                <Trophy size={24} className="text-yellow-500" />
+                            <div>
+                                <span className="text-4xl font-black text-gray-900 leading-none">42</span>
+                                <span className="text-sm text-gray-500 font-bold ml-1">tasks</span>
                             </div>
-                            <p className="text-sm text-gray-500 mb-1">Overall Result</p>
-                            <p className="text-3xl font-bold text-gray-900">220</p>
                         </div>
-
-                        {/* Completed */}
-                        <div className="bg-white/80 backdrop-blur-xl rounded-2xl p-5 border border-white/30 shadow-lg">
-                            <div className="w-12 h-12 rounded-xl bg-purple-50 flex items-center justify-center mb-3">
-                                <CheckCircle2 size={24} className="text-purple-500" />
-                            </div>
-                            <p className="text-sm text-gray-500 mb-1">Completed</p>
-                            <p className="text-3xl font-bold text-gray-900">20</p>
-                        </div>
-                    </div>
-
-                    {/* Homework Progress */}
-                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-4 border border-white/30 shadow-lg">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Homework Progress</h2>
-                        <div className="grid grid-cols-2 gap-8">
-                            <CircularProgress
-                                percentage={92}
-                                size={110}
-                                strokeWidth={8}
-                                color="#3b82f6"
-                                label="User experience Design"
-                                taskCount={12}
-                            />
-                            <CircularProgress
-                                percentage={52}
-                                size={110}
-                                strokeWidth={8}
-                                color="#8b5cf6"
-                                label="User experience Design"
-                                taskCount={12}
-                            />
-                        </div>
-                    </div>
-
-                    {/* Course Statistics */}
-                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-4 border border-white/30 shadow-lg">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Course Statistics</h2>
-                        <div className="flex justify-center">
-                            <DonutChart data={courseStatsData} size={160} strokeWidth={28} />
-                        </div>
-                    </div>
+                        <p className="text-[10px] text-gray-500 mt-3 font-bold uppercase tracking-wider">3 Modules Completed</p>
+                    </GlassCard>
                 </div>
 
-                {/* Right Column - Sidebar (1/3 width) */}
-                <div className="space-y-4">
-                    {/* Profile Card */}
-                    <ProfileCard user={user} />
-
-                    {/* Calendar */}
-                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-lg">
-                        <div className="flex items-center justify-between mb-4">
-                            <button onClick={previousMonth} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
-                                <ChevronLeft size={20} className="text-gray-600" />
-                            </button>
-                            <h3 className="text-sm font-bold text-gray-900">{monthName}</h3>
-                            <button onClick={nextMonth} className="p-1 hover:bg-gray-100 rounded-lg transition-colors">
-                                <ChevronRight size={20} className="text-gray-600" />
-                            </button>
-                        </div>
-
-                        {/* Calendar Grid */}
-                        <div className="grid grid-cols-7 gap-1 text-center">
-                            {['S', 'M', 'T', 'W', 'T', 'F', 'S'].map((day, i) => (
-                                <div key={i} className="text-xs font-semibold text-gray-400 pb-2">
-                                    {day}
-                                </div>
-                            ))}
-
-                            {/* Empty cells for days before month starts */}
-                            {Array.from({ length: firstDay }).map((_, i) => (
-                                <div key={`empty-${i}`} />
-                            ))}
-
-                            {/* Days of the month */}
-                            {Array.from({ length: daysInMonth }).map((_, i) => {
-                                const day = i + 1;
-                                const isToday = day === 12; // Mock today as 12th
-                                const isSelected = [12, 12, 12, 12, 12].includes(day); // Multiple selected days
-                                return (
-                                    <div
-                                        key={day}
-                                        className={`
-                                            aspect-square flex items-center justify-center rounded-lg text-sm font-medium cursor-pointer transition-all
-                                            ${isToday
-                                                ? 'bg-blue-500 text-white shadow-lg'
-                                                : isSelected
-                                                    ? 'bg-blue-100 text-blue-600'
-                                                    : 'text-gray-700 hover:bg-gray-100'
-                                            }
-                                        `}
-                                    >
-                                        {day}
-                                    </div>
-                                );
-                            })}
-                        </div>
-                    </div>
-
-                    {/* Upcoming Class */}
-                    <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-lg">
-                        <h2 className="text-lg font-bold text-gray-900 mb-4">Upcoming Class</h2>
-                        <div className="space-y-3">
-                            {upcomingClasses.map((classItem) => (
-                                <div
-                                    key={classItem.id}
-                                    className="p-4 bg-gray-50 rounded-2xl hover:bg-gray-100 transition-colors cursor-pointer"
-                                >
-                                    <div className="flex items-start gap-3">
-                                        <div className="w-10 h-10 rounded-xl bg-blue-500 flex items-center justify-center flex-shrink-0">
-                                            <Video size={20} className="text-white" />
-                                        </div>
-                                        <div className="flex-1 min-w-0">
-                                            <p className="text-sm font-bold text-gray-900 mb-1">
-                                                {classItem.time}
-                                            </p>
-                                            <h3 className="text-sm font-semibold text-gray-900 mb-1">
-                                                {classItem.title}
-                                            </h3>
-                                            <p className="text-xs text-gray-500">{classItem.platform}</p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
+                {/* ── RIGHT COLUMN ─────────────────────── */}
+                <div className="lg:col-span-8 h-full">
+                    <GlassCard className="h-full flex flex-col justify-center">
+                        <CalendarWidget />
+                    </GlassCard>
                 </div>
+            </div>
+
+            {/* ─── BOTTOM ROW: 4 Cards ────────────────────── */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+
+                {/* Card 1: Track Progress */}
+                <GlassCard className="flex flex-col justify-between min-h-[260px]">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-bold text-gray-700">Track Progress</span>
+                        <ArrowUpRight size={18} className="text-gray-400" />
+                    </div>
+                    <div className="flex justify-center py-4">
+                        <GaugeArc value={68} size={150} color="#3b82f6" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-4 mt-auto pt-5 border-t border-black/5">
+                        <div>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase">Completion</p>
+                            <p className="text-lg font-black text-gray-900">68%</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase">Target</p>
+                            <p className="text-lg font-black text-gray-900">12:45 <span className="text-xs text-gray-400 font-bold">PM</span></p>
+                        </div>
+                    </div>
+                </GlassCard>
+
+                {/* Card 2: Module Balance */}
+                <GlassCard className="flex flex-col justify-between min-h-[260px]">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-bold text-gray-700">Module Balance</span>
+                        <ArrowUpRight size={18} className="text-gray-400" />
+                    </div>
+
+                    <div className="flex justify-center py-4 relative">
+                        <GaugeArc value={75} max={100} size={150} color="#10b981" />
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-4 mt-auto pt-5 border-t border-black/5">
+                        <div>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase">Done</p>
+                            <p className="text-lg font-black text-gray-900">6.3</p>
+                        </div>
+                        <div>
+                            <p className="text-[10px] text-gray-400 font-bold uppercase">Left</p>
+                            <p className="text-lg font-black text-gray-900">4.5</p>
+                        </div>
+                    </div>
+                </GlassCard>
+
+                {/* Card 3: Scores */}
+                <GlassCard className="!bg-white/95 flex flex-col justify-between min-h-[260px]">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-bold text-gray-700">Scores</span>
+                        <ArrowUpRight size={18} className="text-gray-400" />
+                    </div>
+                    <div className="space-y-4 mb-4 flex-1">
+                        {[
+                            { label: 'Quality', value: '85', unit: 'pts' },
+                            { label: 'Collab', value: '92', unit: 'pts' },
+                            { label: 'Init.', value: '+4.5', unit: 'pts' },
+                        ].map((row, i) => (
+                            <div key={i} className="flex justify-between items-baseline border-b border-gray-100 last:border-0 pb-2 last:pb-0">
+                                <span className="text-xs text-gray-500 font-bold uppercase">{row.label}</span>
+                                <span className="text-lg font-black text-gray-900">{row.value}</span>
+                            </div>
+                        ))}
+                    </div>
+                    {/* Mini chart */}
+                    <div className="rounded-xl p-3 bg-gray-50 mt-auto">
+                        <div className="flex items-center gap-2 mb-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
+                            <span className="text-[9px] text-gray-400 font-bold uppercase">Weekly Trend</span>
+                        </div>
+                        <MiniBarGraph data={[70, 75, 65, 80, 85, 78, 90, 82, 88]} height={50} highlight={8} />
+                    </div>
+                </GlassCard>
+
+                {/* Card 4: Performance (formerly Schedule) */}
+                <GlassCard className="flex flex-col justify-between min-h-[260px]">
+                    <div className="flex items-center justify-between mb-4">
+                        <span className="text-sm font-bold text-gray-700">Performance</span>
+                        <ArrowUpRight size={18} className="text-gray-400" />
+                    </div>
+                    <div className="flex items-center gap-4 mb-4">
+                        <div className="scale-90 origin-left">
+                            <DonutChart percentage={85} size={90} strokeWidth={8} />
+                        </div>
+                        <div className="flex-1">
+                            <p className="text-[10px] text-gray-500 font-bold uppercase">Avg. Score</p>
+                            <p className="text-2xl font-black text-gray-900">85</p>
+                        </div>
+                    </div>
+                    <div className="mt-auto">
+                        <div className="flex items-center gap-2 mb-2">
+                            <div className="w-1.5 h-1.5 rounded-full bg-orange-400" />
+                            <span className="text-[9px] text-gray-400 font-bold uppercase">Activity</span>
+                        </div>
+                        <MiniBarGraph data={weeklyData} highlight={9} height={60} />
+                    </div>
+                </GlassCard>
             </div>
         </div>
     );

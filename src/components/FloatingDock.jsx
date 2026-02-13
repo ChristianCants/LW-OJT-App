@@ -24,10 +24,10 @@ const FloatingDock = ({ activeTab, onTabChange }) => {
             <div
                 className="px-8 py-4 flex items-center gap-6 shadow-2xl rounded-full"
                 style={{
-                    background: 'rgba(255, 255, 255, 0.7)',
+                    background: 'rgba(20, 25, 20, 0.85)',
                     backdropFilter: 'blur(40px) saturate(180%)',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.5)'
+                    border: '1px solid rgba(255, 255, 255, 0.08)',
+                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
                 }}
             >
                 {navItems.map((item, index) => {
@@ -44,8 +44,8 @@ const FloatingDock = ({ activeTab, onTabChange }) => {
                             <div className={`
                                 p-2.5 rounded-xl transition-all duration-300
                                 ${isActive
-                                    ? 'text-green-600'
-                                    : 'text-gray-400 hover:text-gray-600'
+                                    ? 'text-[#c8ff00]'
+                                    : 'text-gray-500 hover:text-gray-300'
                                 }
                             `}>
                                 <Icon
@@ -55,28 +55,28 @@ const FloatingDock = ({ activeTab, onTabChange }) => {
                                 />
                             </div>
 
-                            {/* Active indicator - green dot */}
+                            {/* Active indicator - neon green dot */}
                             {isActive && (
-                                <div className="w-1.5 h-1.5 rounded-full bg-green-500 absolute -bottom-1" />
+                                <div className="w-1.5 h-1.5 rounded-full bg-[#c8ff00] absolute -bottom-1" style={{ boxShadow: '0 0 6px rgba(200,255,0,0.5)' }} />
                             )}
 
                             {/* Tooltip */}
                             <div className={`
-                                absolute -top-10 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-gray-900 text-white text-[10px] font-medium rounded-lg opacity-0 transition-all duration-200 pointer-events-none whitespace-nowrap
+                                absolute -top-10 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-white text-gray-900 text-[10px] font-medium rounded-lg opacity-0 transition-all duration-200 pointer-events-none whitespace-nowrap
                                 ${hoveredIndex === index ? 'opacity-100 -translate-y-1' : 'translate-y-1'}
                             `}>
                                 {item.label}
-                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-[3px] border-transparent border-t-gray-900" />
+                                <div className="absolute top-full left-1/2 -translate-x-1/2 border-[3px] border-transparent border-t-white" />
                             </div>
                         </button>
                     );
                 })}
 
-                <div className="w-[1px] h-8 bg-gray-200" />
+                <div className="w-[1px] h-8 bg-white/10" />
 
                 <button
                     onClick={handleLogout}
-                    className="p-2.5 text-gray-400 hover:text-red-500 transition-all duration-300 group relative"
+                    className="p-2.5 text-gray-500 hover:text-red-400 transition-all duration-300 group relative"
                 >
                     <LogOut size={22} strokeWidth={1.5} className="group-hover:translate-x-0.5 transition-transform" />
                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 px-2.5 py-1 bg-red-500 text-white text-[10px] font-medium rounded-lg opacity-0 group-hover:opacity-100 transition-all duration-200 pointer-events-none whitespace-nowrap -translate-y-1">

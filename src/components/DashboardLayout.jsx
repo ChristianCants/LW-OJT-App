@@ -1,21 +1,29 @@
 import React from 'react';
 import { useTheme } from '../context/ThemeContext';
+import { useNavigate } from 'react-router-dom';
 import {
     Search,
     Bell,
     Moon,
     Sun,
+    Settings,
+    LogOut,
 } from 'lucide-react';
-import FloatingDock from './FloatingDock';
-
 
 const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
     const { theme, toggleTheme } = useTheme();
+    const navigate = useNavigate();
+
+    const handleSignOut = () => {
+        localStorage.removeItem('user');
+        navigate('/signin');
+    };
 
     return (
-        <div className="flex flex-col h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300 overflow-hidden font-sans relative">
-
-            {/* Video + Particles Background */}
+        <div className="flex flex-col h-screen text-white transition-colors duration-300 overflow-hidden font-sans relative"
+            style={{ background: '#0a0d0a' }}
+        >
+            {/* Video Background */}
             <div className="fixed inset-0 z-0">
                 <video
                     autoPlay
@@ -27,62 +35,76 @@ const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
                     <source src="https://www.pexels.com/download/video/10922866/" type="video/mp4" />
                 </video>
             </div>
-
-            {/* Minimal Top Bar for Profile & Search */}
-            <header className="h-20 flex items-center justify-between px-6 lg:px-10 shrink-0 z-40 relative">
-                {/* Logo / Brand */}
-                <div className="flex items-center gap-2">
-                    <span className="h-8 w-8 rounded-full bg-green-500 flex items-center justify-center text-white font-bold">L</span>
-                    <span className="text-xl font-bold tracking-tight">Lifewood</span>
+            {/* Top Nav Bar */}
+            <header
+                className="h-16 flex items-center justify-between px-4 lg:px-6 shrink-0 z-40 sticky top-0 transition-all duration-300"
+                style={{
+                    background: 'rgba(255, 255, 255, 0.5)',
+                    backdropFilter: 'blur(20px)',
+                    boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)',
+                    borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
+                }}
+            >
+                {/* Logo */}
+                <div className="flex items-center gap-2.5">
+                    <div className="h-8 w-8 rounded-lg bg-[#c8ff00] flex items-center justify-center shadow-sm">
+                        <span className="text-gray-900 font-black text-sm">✦</span>
+                    </div>
+                    <span className="text-base font-bold text-gray-900 tracking-tight drop-shadow-sm">Lifewood</span>
                 </div>
 
-                {/* Right Actions */}
-                <div className="flex items-center gap-4">
-                    {/* Search Bar - Hidden on small screens for cleanliness */}
-                    <div className="hidden md:flex items-center gap-3 bg-[var(--bg-secondary)] px-4 py-2.5 rounded-full border border-[var(--border-color)] w-64 shadow-sm backdrop-blur-md bg-opacity-80">
-                        <Search size={18} className="text-[var(--text-secondary)]" />
-                        <input
-                            type="text"
-                            placeholder="Search..."
-                            className="bg-transparent border-none outline-none text-sm w-full placeholder-[var(--text-secondary)] text-[var(--text-primary)]"
-                        />
-                    </div>
+                {/* Center Nav Tabs */}
+                <div className="hidden md:flex items-center gap-2">
+                    {[
+                        { id: 'dashboard', label: 'Dashboard' },
+                        { id: 'analytics', label: 'Analytics' },
+                        { id: 'members', label: 'Evaluation' },
+                        { id: 'activity', label: 'Reports' },
+                    ].map(tab => (
+                        <button
+                            key={tab.id}
+                            onClick={() => onTabChange(tab.id)}
+                            className={`px-5 py-2 rounded-full text-xs font-bold transition-all duration-300 ${activeTab === tab.id
+                                ? 'bg-gray-900 text-white shadow-md transform scale-105'
+                                : 'text-gray-600 hover:text-gray-900 border border-gray-300/50 hover:border-gray-400/80 bg-white/20'
+                                }`}
+                        >
+                            {tab.label}
+                        </button>
+                    ))}
+                </div>
 
-                    <button
-                        onClick={toggleTheme}
-                        className="p-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all shadow-sm backdrop-blur-md"
-                    >
-                        {theme === 'light' ? <Moon size={20} /> : <Sun size={20} />}
+                {/* Right: Search + Profile */}
+                <div className="flex items-center gap-3">
+                    <button className="p-2.5 rounded-full hover:bg-black/5 transition-colors text-gray-600 hover:text-gray-900">
+                        <Search size={18} />
                     </button>
-
-                    <button className="p-2.5 bg-[var(--bg-secondary)] border border-[var(--border-color)] rounded-full text-[var(--text-secondary)] hover:text-[var(--text-primary)] transition-all shadow-sm relative backdrop-blur-md">
-                        <Bell size={20} />
-                        <span className="absolute top-2 right-2.5 w-2 h-2 bg-red-500 rounded-full border border-[var(--bg-card)]"></span>
+                    <button className="p-2.5 rounded-full hover:bg-black/5 transition-colors relative text-gray-600 hover:text-gray-900">
+                        <Bell size={18} />
                     </button>
-
-                    <div className="flex items-center gap-3 pl-4 border-l border-[var(--border-color)]">
+                    <div className="p-0.5 rounded-full border border-gray-200 bg-white/50">
                         <img
-                            src={`https://ui-avatars.com/api/?name=${user?.username || 'User'}&background=0D8ABC&color=fff`}
+                            src={`https://ui-avatars.com/api/?name=${user?.username || 'User'}&background=c8ff00&color=111&bold=true&size=32`}
                             alt="Profile"
-                            className="w-10 h-10 rounded-full border-2 border-[var(--bg-secondary)] shadow-sm"
+                            className="w-8 h-8 rounded-full"
                         />
-                        <div className="hidden md:block">
-                            <p className="text-sm font-bold leading-none">{user?.username || 'Guest'}</p>
-                            <p className="text-xs text-[var(--text-secondary)] mt-1">{user?.email || 'Intern'}</p>
-                        </div>
                     </div>
+                    <button
+                        onClick={handleSignOut}
+                        className="p-2.5 rounded-full hover:bg-red-50 text-gray-600 hover:text-red-500 transition-colors border border-transparent hover:border-red-100 ml-1"
+                        title="Sign Out"
+                    >
+                        <LogOut size={18} />
+                    </button>
                 </div>
             </header>
 
             {/* Main Content Area */}
-            <main className="flex-1 overflow-y-auto scrollbar-hide px-6 lg:px-10 pb-28 relative z-10"> {/* Hidden scrollbar for Dock */}
-                <div className="max-w-7xl mx-auto h-full">
+            <main className="flex-1 overflow-y-auto scrollbar-hide px-4 lg:px-6 pb-10 relative z-10 w-full">
+                <div className="w-full h-full">
                     {children}
                 </div>
             </main>
-
-            {/* Floating Liquid Dock */}
-            <FloatingDock activeTab={activeTab} onTabChange={onTabChange} />
         </div>
     );
 };
