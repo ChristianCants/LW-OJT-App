@@ -10,12 +10,14 @@ import SecretRouteListener from './components/SecretRouteListener';
 import { ThemeProvider } from './context/ThemeContext';
 
 
+import LandingPage from './pages/LandingPage';
+
 function App() {
   return (
     <ThemeProvider>
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/signin" replace />} />
+          <Route path="/" element={<LandingPage />} />
           <Route path="/signin" element={<SignIn />} />
           <Route path="/signup" element={<SignUp />} />
           <Route path="/dashboard" element={<UserDashboard />} />
