@@ -47,10 +47,11 @@ const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
             >
                 {/* Logo */}
                 <div className="flex items-center gap-2.5">
-                    <div className="h-8 w-8 rounded-lg bg-[#c8ff00] flex items-center justify-center shadow-sm">
-                        <span className="text-gray-900 font-black text-sm">✦</span>
-                    </div>
-                    <span className="text-base font-bold text-gray-900 tracking-tight drop-shadow-sm">Lifewood</span>
+                    <img
+                        src="/Logo 1.png"
+                        alt="Lifewood"
+                        className="h-10 w-auto object-contain"
+                    />
                 </div>
 
                 {/* Center Nav Tabs */}

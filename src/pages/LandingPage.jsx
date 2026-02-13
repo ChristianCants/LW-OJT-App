@@ -24,12 +24,11 @@ const Navbar = () => {
                 <div className="px-6 py-3 flex items-center justify-between">
                     {/* Logo */}
                     <div className="flex items-center gap-2">
-                        <div className="text-[#FFB347]">
-                            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
-                                <path d="M12 2L2 12L12 22L22 12L12 2Z" />
-                            </svg>
-                        </div>
-                        <span className="text-2xl font-bold tracking-tight text-[#133020]">lifewood</span>
+                        <img
+                            src="/Logo 1.png"
+                            alt="Lifewood"
+                            className="h-12 w-auto object-contain"
+                        />
                     </div>
 
                     {/* Desktop Links */}
@@ -174,19 +173,6 @@ const About = () => {
                         >
                             <span className="px-6 py-3 block text-white text-sm font-medium">
                                 Explore Programs
-                            </span>
-                        </GlassSurface>
-                        <GlassSurface
-                            borderRadius={50}
-                            brightness={95}
-                            opacity={0.6}
-                            blur={10}
-                            borderWidth={1}
-                            className="cursor-pointer hover:scale-105 transition-transform"
-                            style={{ border: '1px solid rgba(19, 48, 32, 0.3)' }}
-                        >
-                            <span className="w-11 h-11 flex items-center justify-center text-[#133020]">
-                                <ArrowRight size={20} />
                             </span>
                         </GlassSurface>
                     </div>
@@ -486,26 +472,27 @@ const ServicesGrid = () => {
 
 const Footer = () => {
     return (
-        <footer className="px-4 pb-4 bg-white">
-            <div className="bg-[#112a1c] rounded-[30px] px-8 py-10 md:px-14 text-white relative overflow-hidden">
-                <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row justify-between gap-10 relative z-10">
+        <footer className="px-4 pb-4 md:px-8 md:pb-8 bg-white">
+            <div className="bg-[#112a1c] rounded-[3rem] px-8 py-12 md:px-16 text-white relative overflow-hidden">
+                <div className="max-w-[1400px] mx-auto flex flex-col lg:flex-row justify-between items-end gap-10 relative z-10">
 
-                    <div className="max-w-lg">
-                        <div className="flex items-center gap-2 mb-4">
-                            <div className="text-[#FFB347]">
-                                <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor">
-                                    <path d="M12 2L2 12L12 22L22 12L12 2Z" />
-                                </svg>
+                    <div className="flex flex-col gap-10 max-w-2xl">
+                        <div>
+                            <div className="flex items-center gap-2 mb-6">
+                                <img
+                                    src="/Logo 2.png"
+                                    alt="Lifewood"
+                                    className="h-10 w-auto object-contain"
+                                />
                             </div>
-                            <span className="text-2xl font-bold tracking-tight">lifewood</span>
+                            <h2 className="text-xl md:text-2xl font-light leading-relaxed text-gray-200">
+                                We provide global Data Engineering Services to enable AI Solutions.
+                            </h2>
                         </div>
-                        <p className="text-base leading-relaxed opacity-80 mb-8">
-                            Empowering interns with AI-driven training in Web Dev, Game Dev, Genealogy & Prompt Engineering.
-                        </p>
 
-                        <div className="flex flex-col gap-3">
-                            <h3 className="text-2xl font-light">Contact Us</h3>
-                            <div className="flex gap-5 text-[11px] text-gray-400 uppercase tracking-wider">
+                        <div className="flex flex-col gap-4">
+                            <h3 className="text-3xl font-normal text-white">Contact Us</h3>
+                            <div className="flex flex-wrap gap-6 text-sm text-gray-400 font-medium">
                                 <a href="#" className="hover:text-white transition-colors">Privacy Policy</a>
                                 <a href="#" className="hover:text-white transition-colors">Cookie Policy</a>
                                 <a href="#" className="hover:text-white transition-colors">Terms and Conditions</a>
@@ -514,37 +501,33 @@ const Footer = () => {
                         </div>
                     </div>
 
-                    <div className="flex flex-col justify-between items-end gap-6">
-                        <div className="text-right hidden lg:block">
-                            <h4 className="text-[11px] font-bold text-gray-400 uppercase mb-3 tracking-wider">Find Us On</h4>
-                            <div className="flex gap-4">
-                                <a href="#" className="flex flex-col items-center gap-1 group">
-                                    <div className="p-2 border border-white/20 rounded group-hover:bg-white group-hover:text-[#133020] transition-colors"><Linkedin size={16} /></div>
-                                    <span className="text-[9px] text-gray-400">Linkedin</span>
+                    <div className="flex flex-col items-start lg:items-end gap-8 w-full lg:w-auto">
+                        <div className="flex flex-col lg:items-end gap-4 w-full">
+                            <h4 className="text-sm font-medium text-white">Find Us On:</h4>
+                            <div className="flex gap-6">
+                                <a href="#" className="flex flex-col items-center gap-2 group">
+                                    <Linkedin size={24} className="text-white group-hover:text-[#c8ff00] transition-colors" />
+                                    <span className="text-[10px] text-gray-400 uppercase tracking-widest hidden group-hover:block transition-all">Linkedin</span>
                                 </a>
-                                <a href="#" className="flex flex-col items-center gap-1 group">
-                                    <div className="p-2 border border-white/20 rounded group-hover:bg-white group-hover:text-[#133020] transition-colors"><Facebook size={16} /></div>
-                                    <span className="text-[9px] text-gray-400">Facebook</span>
+                                <a href="#" className="flex flex-col items-center gap-2 group">
+                                    <Facebook size={24} className="text-white group-hover:text-[#c8ff00] transition-colors" />
+                                    <span className="text-[10px] text-gray-400 uppercase tracking-widest hidden group-hover:block transition-all">Facebook</span>
                                 </a>
-                                <a href="#" className="flex flex-col items-center gap-1 group">
-                                    <div className="p-2 border border-white/20 rounded group-hover:bg-white group-hover:text-[#133020] transition-colors"><Instagram size={16} /></div>
-                                    <span className="text-[9px] text-gray-400">Instagram</span>
+                                <a href="#" className="flex flex-col items-center gap-2 group">
+                                    <Instagram size={24} className="text-white group-hover:text-[#c8ff00] transition-colors" />
+                                    <span className="text-[10px] text-gray-400 uppercase tracking-widest hidden group-hover:block transition-all">Instagram</span>
                                 </a>
-                                <a href="#" className="flex flex-col items-center gap-1 group">
-                                    <div className="p-2 border border-white/20 rounded group-hover:bg-white group-hover:text-[#133020] transition-colors"><Youtube size={16} /></div>
-                                    <span className="text-[9px] text-gray-400">Youtube</span>
+                                <a href="#" className="flex flex-col items-center gap-2 group">
+                                    <Youtube size={24} className="text-white group-hover:text-[#c8ff00] transition-colors" />
+                                    <span className="text-[10px] text-gray-400 uppercase tracking-widest hidden group-hover:block transition-all">Youtube</span>
                                 </a>
                             </div>
                         </div>
 
-                        <div className="flex items-center gap-4">
-                            <div className="text-[11px] text-gray-400">© 2026 Lifewood - All Rights Reserved</div>
-                            <button className="bg-white text-[#133020] px-5 py-1.5 rounded-full text-xs font-bold flex items-center gap-2 hover:bg-gray-100 transition-colors">
-                                <div className="p-1 bg-[#FFB347] rounded-full">
-                                    <Phone size={10} className="text-[#133020]" />
-                                </div>
-                                Start a call
-                            </button>
+                        <div className="flex flex-col md:flex-row items-center justify-between lg:justify-end w-full gap-4 mt-2">
+                            <div className="text-xs text-gray-400 font-medium tracking-wide whitespace-nowrap order-2 md:order-1">
+                                © 2026 Lifewood - All Rights Reserved
+                            </div>
                         </div>
                     </div>
                 </div>
