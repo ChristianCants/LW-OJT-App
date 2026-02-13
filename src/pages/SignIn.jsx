@@ -35,6 +35,15 @@ const SignIn = () => {
             {/* Left Panel - Form (40%) */}
             <div className="w-full lg:w-[40%] flex flex-col justify-center p-8 lg:p-20 relative z-10">
                 <div className="max-w-md w-full mx-auto">
+                    <button
+                        onClick={() => navigate('/signin')}
+                        className="flex items-center gap-2 text-[#888] hover:text-white transition-colors mb-6 group"
+                    >
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform">
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M10.5 19.5L3 12m0 0l7.5-7.5M3 12h18" />
+                        </svg>
+                        <span className="text-sm font-medium">Back</span>
+                    </button>
                     <div className="mb-10 text-center lg:text-left">
                         <div className="inline-flex items-center gap-2 mb-8">
                             <span className="h-4 w-4 rounded-full bg-yellow-400"></span>
@@ -123,11 +132,6 @@ const SignIn = () => {
                             )}
                         </button>
                     </form>
-
-                    <div className="mt-8 text-center text-sm text-[#888]">
-                        Don't have an account?{' '}
-                        <Link to="/signup" className="text-white font-medium hover:underline">Sign Up</Link>
-                    </div>
                 </div>
             </div>
 

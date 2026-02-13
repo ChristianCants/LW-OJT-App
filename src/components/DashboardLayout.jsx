@@ -7,12 +7,41 @@ import {
     Sun,
 } from 'lucide-react';
 import FloatingDock from './FloatingDock';
+import Particles from './Particles';
 
 const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
     const { theme, toggleTheme } = useTheme();
 
     return (
         <div className="flex flex-col h-screen bg-[var(--bg-primary)] text-[var(--text-primary)] transition-colors duration-300 overflow-hidden font-sans relative">
+
+            {/* Video + Particles Background */}
+            <div className="fixed inset-0 z-0">
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover"
+                >
+                    <source src="https://videos.pexels.com/video-files/10922866/10922866-uhd_2560_1440_30fps.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute inset-0">
+                    <Particles
+                        particleCount={800}
+                        particleSpread={17}
+                        speed={0.28}
+                        particleColors={['#ffffff', '#00d10e', '#dfd707', '#171717']}
+                        moveParticlesOnHover={false}
+                        particleHoverFactor={1}
+                        alphaParticles={false}
+                        particleBaseSize={100}
+                        sizeRandomness={1}
+                        cameraDistance={20}
+                        disableRotation={false}
+                    />
+                </div>
+            </div>
 
             {/* Minimal Top Bar for Profile & Search */}
             <header className="h-20 flex items-center justify-between px-6 lg:px-10 shrink-0 z-40">
