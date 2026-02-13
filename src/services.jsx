@@ -8,16 +8,10 @@ export const supabase = createClient(supabaseUrl, supabaseKey);
 
 // Custom Auth Functions using user_access table
 
-export const customSignUp = async (username, email, password, role) => {
-  // Note: email is not currently in the user_access schema request, but passing it for potential future use or if we add it.
-  // The user request specifically mentioned: user, password, and role column. 
-  // I will just use username, password, role as requested for the table.
-
+export const createUser = async (userData) => {
   const { data, error } = await supabase
-    .from('user_access')
-    .insert([
-      { username, password, role }
-    ])
+    .from('profiles')
+    .insert([userData])
     .select();
 
   return { data, error };
@@ -25,7 +19,7 @@ export const customSignUp = async (username, email, password, role) => {
 
 export const customSignIn = async (username, password) => {
   const { data, error } = await supabase
-    .from('user_access')
+    .from('profiles')
     .select('*')
     .eq('username', username)
     .eq('password', password)
