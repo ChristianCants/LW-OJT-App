@@ -94,15 +94,7 @@ const CalendarWidget = () => {
 
 /* ─── Glass Card ────────────────────────────────────────────── */
 const GlassCard = ({ children, className = '' }) => (
-    <div
-        className={`rounded-3xl p-6 ${className}`}
-        style={{
-            background: 'rgba(245, 243, 238, 0.9)',
-            backdropFilter: 'blur(40px)',
-            border: '1px solid rgba(255,255,255,0.6)',
-            boxShadow: '0 12px 32px rgba(0,0,0,0.08), inset 0 1px 0 rgba(255,255,255,0.8)',
-        }}
-    >
+    <div className={`liquid-glass p-6 ${className}`}>
         {children}
     </div>
 );

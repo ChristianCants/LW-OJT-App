@@ -37,13 +37,8 @@ const DashboardLayout = ({ children, user, activeTab, onTabChange }) => {
             </div>
             {/* Top Nav Bar */}
             <header
-                className="h-16 flex items-center justify-between px-4 lg:px-6 shrink-0 z-40 sticky top-0 transition-all duration-300"
-                style={{
-                    background: 'rgba(255, 255, 255, 0.5)',
-                    backdropFilter: 'blur(20px)',
-                    boxShadow: '0 4px 30px rgba(0, 0, 0, 0.05)',
-                    borderBottom: '1px solid rgba(255, 255, 255, 0.5)',
-                }}
+                className="h-16 flex items-center justify-between px-4 lg:px-6 shrink-0 z-40 sticky top-0 transition-all duration-300 liquid-glass"
+                style={{ borderRadius: 0 }}
             >
                 {/* Logo */}
                 <div className="flex items-center gap-2.5">

@@ -22,13 +22,7 @@ const FloatingDock = ({ activeTab, onTabChange }) => {
     return (
         <div className="fixed bottom-6 left-1/2 -translate-x-1/2 z-50">
             <div
-                className="px-8 py-4 flex items-center gap-6 shadow-2xl rounded-full"
-                style={{
-                    background: 'rgba(20, 25, 20, 0.85)',
-                    backdropFilter: 'blur(40px) saturate(180%)',
-                    border: '1px solid rgba(255, 255, 255, 0.08)',
-                    boxShadow: '0 8px 32px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.05)'
-                }}
+                className="px-8 py-4 flex items-center gap-6 shadow-2xl liquid-glass-dark"
             >
                 {navItems.map((item, index) => {
                     const isActive = activeTab === item.id;
