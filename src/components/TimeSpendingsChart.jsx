@@ -16,7 +16,7 @@ const TimeSpendingsChart = ({ weeklyData }) => {
     const maxValue = Math.max(...weeklyData);
 
     return (
-        <div className="bg-white rounded-3xl p-6 border border-gray-100">
+        <div className="bg-white/80 backdrop-blur-xl rounded-3xl p-6 border border-white/30 shadow-lg">
             <div className="flex items-center justify-between mb-6">
                 <h2 className="text-lg font-bold text-gray-900">Time Spendings</h2>
                 <div className="flex items-center gap-2 bg-gray-100 rounded-lg p-1">
@@ -72,10 +72,10 @@ const TimeSpendingsChart = ({ weeklyData }) => {
                             <div className="w-full flex items-end justify-center" style={{ height: '100%' }}>
                                 <div
                                     className={`w-full rounded-t-lg transition-all duration-300 ${isCurrentDay
-                                            ? 'bg-red-400'
-                                            : value > 0
-                                                ? 'bg-gray-200 hover:bg-gray-300'
-                                                : 'bg-gray-100'
+                                        ? 'bg-red-400'
+                                        : value > 0
+                                            ? 'bg-gray-200 hover:bg-gray-300'
+                                            : 'bg-gray-100'
                                         }`}
                                     style={{ height: `${heightPercentage}%`, minHeight: value > 0 ? '8px' : '0' }}
                                 />

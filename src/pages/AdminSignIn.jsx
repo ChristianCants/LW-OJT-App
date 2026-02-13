@@ -32,7 +32,7 @@ const AdminSignIn = () => {
             <div className="w-full lg:w-[40%] flex flex-col justify-center p-8 lg:p-20 relative z-10">
                 <div className="max-w-md w-full mx-auto">
                     <button
-                        onClick={() => navigate('/signin')}
+                        onClick={() => navigate('/')}
                         className="flex items-center gap-2 text-[#888] hover:text-white transition-colors mb-6 group"
                     >
                         <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor" className="w-4 h-4 group-hover:-translate-x-1 transition-transform">
