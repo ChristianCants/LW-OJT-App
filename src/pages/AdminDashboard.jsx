@@ -6,6 +6,7 @@ import { useTheme } from '../context/ThemeContext';
 import DashboardOverview from '../components/admin/DashboardOverview';
 import AttendanceModule from '../components/admin/AttendanceModule';
 import TaskManagement from '../components/admin/TaskManagement';
+import CreateUser from '../components/admin/CreateUser';
 import AdminFloatingDock from '../components/AdminFloatingDock';
 
 const AdminDashboard = () => {
@@ -88,6 +89,7 @@ const AdminDashboard = () => {
                 {activeTab === 'tasks' && <TaskManagement />}
                 {activeTab === 'performance' && <PlaceholderModule title="Performance Scoring" />}
                 {activeTab === 'feedback' && <PlaceholderModule title="Feedback System" />}
+                {activeTab === 'create-user' && <CreateUser />}
             </main>
 
             {/* Floating Dock Navigation */}

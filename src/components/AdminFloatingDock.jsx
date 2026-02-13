@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { LayoutDashboard, Users, Calendar, CheckSquare, BarChart3, MessageSquare, LogOut } from 'lucide-react';
+import { LayoutDashboard, Users, Calendar, CheckSquare, BarChart3, MessageSquare, LogOut, UserPlus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const AdminFloatingDock = ({ activeTab, onTabChange }) => {
@@ -13,6 +13,7 @@ const AdminFloatingDock = ({ activeTab, onTabChange }) => {
         { id: 'tasks', icon: CheckSquare, label: 'Tasks' },
         { id: 'performance', icon: BarChart3, label: 'Performance' },
         { id: 'feedback', icon: MessageSquare, label: 'Feedback' },
+        { id: 'create-user', icon: UserPlus, label: 'Create User' },
     ];
 
     const handleLogout = async () => {
