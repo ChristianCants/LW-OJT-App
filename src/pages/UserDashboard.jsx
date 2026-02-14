@@ -26,13 +26,19 @@ const UserDashboard = () => {
         }
     }, [navigate]);
 
+    // Callback to refresh user data after profile save
+    const refreshUser = () => {
+        const storedUser = localStorage.getItem('user');
+        if (storedUser) setUser(JSON.parse(storedUser));
+    };
+
     if (!user) return null;
 
     return (
         <DashboardLayout user={user} activeTab={activeTab} onTabChange={setActiveTab}>
             {activeTab === 'dashboard' ? (
                 <div className="animate-fade-in h-full">
-                    <DashboardModule user={user} />
+                    <DashboardModule user={user} onProfileUpdate={refreshUser} />
                 </div>
             ) : (
                 <div className="animate-fade-in h-full">

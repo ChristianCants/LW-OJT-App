@@ -210,115 +210,101 @@ const ActivityModule = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 2xl:grid-cols-4 gap-6">
                     {filteredModules.map((mod, index) => {
                         const config = moduleConfig[mod.name] || defaultConfig;
-                        const Icon = config.icon;
+
+                        // Helper to convert hex to rgba
+                        const hexToRgba = (hex, alpha) => {
+                            const r = parseInt(hex.slice(1, 3), 16);
+                            const g = parseInt(hex.slice(3, 5), 16);
+                            const b = parseInt(hex.slice(5, 7), 16);
+                            return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+                        };
+
+                        // Liquid Glass Style
+                        const cardStyle = {
+                            background: `linear-gradient(135deg, ${hexToRgba(config.color, 0.6)} 0%, ${hexToRgba(config.color, 0.1)} 100%)`,
+                            backdropFilter: 'blur(20px) saturate(180%)',
+                            WebkitBackdropFilter: 'blur(20px) saturate(180%)',
+                            border: `1px solid ${hexToRgba(config.color, 0.3)}`,
+                            boxShadow: `0 8px 32px 0 ${hexToRgba(config.color, 0.15)}`,
+                            borderRadius: '32px',
+                        };
+
+                        // Use first activity date or default
+                        const dateStr = mod.activities[0]?.date ? new Date(mod.activities[0].date).toLocaleDateString('en-US', { month: 'short', day: '2-digit', year: 'numeric' }) : 'No Date';
 
                         return (
                             <div
                                 key={mod.name}
                                 onClick={() => setSelectedModule(mod.name)}
-                                className="liquid-glass-card cursor-pointer group hover:shadow-[0_20px_60px_-15px_rgba(0,0,0,0.15)] transition-all duration-500"
-                                style={{
-                                    padding: 0,
-                                    minHeight: '240px',
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    borderRadius: '24px' // Ensure more rounded corners like screenshot
-                                }}
+                                className="relative overflow-hidden p-6 text-white cursor-pointer transition-transform duration-300 hover:-translate-y-1 hover:shadow-2xl aspect-[4/3] flex flex-col justify-between group"
+                                style={cardStyle}
                             >
-                                {/* Card Content */}
-                                <div className="p-6 flex flex-col flex-1 relative overflow-hidden">
+                                {/* Top Row: Date & Menu */}
+                                <div className="flex justify-between items-center opacity-80 relative z-10">
+                                    <span className="text-xs font-semibold tracking-wide">{dateStr}</span>
+                                    <button className="p-1 hover:bg-white/10 rounded-full transition-colors">
+                                        <div className="flex flex-col gap-[2px]">
+                                            <div className="w-1 h-1 bg-white rounded-full"></div>
+                                            <div className="w-1 h-1 bg-white rounded-full"></div>
+                                        </div>
+                                    </button>
+                                </div>
 
-                                    {/* Decorative Background Glow */}
-                                    <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-white/10 to-transparent rounded-full blur-2xl -translate-y-1/2 translate-x-1/2 pointer-events-none"
-                                        style={{ background: config.color, opacity: 0.15 }} />
+                                {/* Middle: Title & Subtitle */}
+                                <div className="mt-4 mb-6 relative z-10">
+                                    <h3 className="text-2xl font-bold tracking-tight mb-1 text-shadow-sm">{mod.name}</h3>
+                                    <p className="text-sm font-medium text-white/80">{mod.activities[0]?.activity || 'No main activity'}</p>
+                                </div>
 
-                                    {/* Decorative Header Block with Activity Previews */}
-                                    <div
-                                        className="w-full h-32 rounded-2xl mb-5 flex items-center justify-center relative overflow-hidden group-hover:scale-[1.02] transition-transform duration-500"
-                                        style={{
-                                            background: `linear-gradient(135deg, ${config.color}15, ${config.color}30)`,
-                                            border: `1px solid ${config.color}25`,
-                                            boxShadow: `inset 0 0 20px ${config.color}10`
-                                        }}
-                                    >
-                                        {/* Background Pattern/Icon */}
-                                        <Icon
-                                            size={80}
-                                            className="absolute -bottom-4 -right-4 opacity-5 pointer-events-none text-current"
-                                            style={{ color: config.color }}
+                                {/* Progress Section */}
+                                <div className="mt-auto relative z-10">
+                                    <div className="flex justify-between items-end mb-2">
+                                        <span className="text-xs font-bold uppercase tracking-wider text-white/90">Progress</span>
+                                        <span className="text-xs font-bold">{mod.avgScore || 0}%</span>
+                                    </div>
+                                    <div className="h-1.5 w-full bg-black/20 rounded-full overflow-hidden backdrop-blur-sm border border-white/10">
+                                        <div
+                                            className="h-full rounded-full transition-all duration-1000 ease-out shadow-[0_0_10px_rgba(255,255,255,0.5)]"
+                                            style={{
+                                                width: `${mod.avgScore || 0}%`,
+                                                backgroundColor: '#ffffff'
+                                            }}
                                         />
-
-                                        <div className="flex gap-2 relative z-10 w-full justify-center px-2">
-                                            {mod.activities.length > 0 ? (
-                                                mod.activities.slice(0, 3).map((a, i) => (
-                                                    <div
-                                                        key={i}
-                                                        className="w-20 h-24 rounded-xl flex items-center justify-center text-[10px] font-bold leading-tight p-2 text-center shadow-lg backdrop-blur-sm transition-all duration-300 shrink-0"
-                                                        style={{
-                                                            background: i === 0
-                                                                ? `linear-gradient(135deg, ${config.color}, ${config.color}dd)`
-                                                                : 'rgba(255,255,255,0.9)',
-                                                            color: i === 0 ? '#fff' : '#4b5563',
-                                                            transform: i === 0
-                                                                ? 'rotate(-3deg) scale(1.05) translateY(-2px)'
-                                                                : `rotate(${i * 3}deg) scale(0.95)`,
-                                                            zIndex: 3 - i,
-                                                            border: '1px solid rgba(255,255,255,0.4)',
-                                                            maxWidth: '80px'
-                                                        }}
-                                                    >
-                                                        {a.activity.split(' ').slice(0, 3).join(' ')}
-                                                    </div>
-                                                ))
-                                            ) : (
-                                                <div className="text-xs text-gray-400 font-medium italic">No activities yet</div>
-                                            )}
-                                        </div>
-                                    </div>
-
-                                    {/* Title & Meta */}
-                                    <div className="mb-2">
-                                        <div className="flex items-center justify-between mb-1">
-                                            <h3 className="text-lg font-bold text-gray-900 group-hover:text-gray-700 transition-colors">
-                                                {mod.name}
-                                            </h3>
-                                            <div className={`p-2 rounded-xl bg-white/50 backdrop-blur-md shadow-sm border border-white/40 ${config.text}`}>
-                                                <Icon size={18} strokeWidth={2} />
-                                            </div>
-                                        </div>
-                                        <p className={`text-xs font-semibold ${config.text} px-2.5 py-1 rounded-lg bg-white/40 inline-flex items-center gap-1.5`}>
-                                            <span className="w-1.5 h-1.5 rounded-full bg-current opacity-70" />
-                                            {mod.activities.length} {mod.activities.length === 1 ? 'activity' : 'activities'}
-                                        </p>
-                                    </div>
-
-                                    {/* Bottom: Stats */}
-                                    <div className="mt-auto pt-4 border-t border-gray-100/50 flex items-center justify-between">
-                                        {mod.avgScore !== null ? (
-                                            <div className="flex flex-col">
-                                                <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-0.5">Avg. Score</span>
-                                                <span className="text-lg font-black text-gray-900 flex items-baseline gap-1">
-                                                    {mod.avgScore}
-                                                    <span className="text-[10px] text-gray-400 font-bold">%</span>
-                                                </span>
-                                            </div>
-                                        ) : (
-                                            <span className="text-xs text-orange-500 font-bold bg-orange-50 px-2 py-1 rounded-lg border border-orange-100">
-                                                Pending Review
-                                            </span>
-                                        )}
-                                        <div className="text-right">
-                                            <span className="text-[10px] text-gray-400 font-bold uppercase tracking-wider mb-0.5 block">Size</span>
-                                            <span className="text-xs font-bold text-gray-500 bg-gray-100 px-2 py-1 rounded-lg">
-                                                {mod.totalSize} MB
-                                            </span>
-                                        </div>
                                     </div>
                                 </div>
+
+                                {/* Bottom Row: Avatars & Time Left */}
+                                <div className="flex justify-between items-center mt-6 relative z-10">
+                                    {/* Avatars */}
+                                    <div className="flex -space-x-2">
+                                        {[1, 2].map((_, i) => (
+                                            <div key={i} className="w-8 h-8 rounded-full border-2 border-white/10 bg-gray-600 flex items-center justify-center text-[10px] font-bold overflow-hidden shadow-lg backdrop-blur-md">
+                                                <img src={`https://i.pravatar.cc/150?u=${mod.name}${i}`} alt="user" className="w-full h-full object-cover opacity-90 hover:opacity-100 transition-opacity" />
+                                            </div>
+                                        ))}
+                                        <div
+                                            className="w-8 h-8 rounded-full border-2 border-white/10 flex items-center justify-center text-[10px] font-bold shadow-lg backdrop-blur-md"
+                                            style={{ backgroundColor: hexToRgba(config.color, 0.8) }}
+                                        >
+                                            <ChevronRight size={14} className="text-white" />
+                                        </div>
+                                    </div>
+
+                                    {/* Time Left Pill */}
+                                    <div className="px-3 py-1.5 rounded-full bg-black/20 backdrop-blur-md border border-white/10 text-xs font-semibold tracking-wide shadow-sm">
+                                        {mod.activities.length} tasks left
+                                    </div>
+                                </div>
+
+                                {/* Inner Glow/Reflection for Liquid Effect */}
+                                <div
+                                    className="absolute -top-20 -right-20 w-64 h-64 rounded-full blur-[60px] pointer-events-none opacity-40 mix-blend-overlay"
+                                    style={{ backgroundColor: '#ffffff' }}
+                                />
+                                <div className="absolute inset-0 bg-gradient-to-b from-white/10 to-transparent pointer-events-none" />
                             </div>
                         );
-                    })}
-                </div>
+                    })}                </div>
             </div>
 
             {/* ─── Module Drawer (activity list) ──────── */}

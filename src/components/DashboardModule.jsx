@@ -1,354 +1,789 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
+import { supabase } from '../services'; // Import Supabase client
 import {
     ArrowUpRight,
-    AlertTriangle,
+    Search,
+    Bell,
+    Settings,
+    ChevronDown,
+    Layout,
+    CreditCard,
     Zap,
+    Target,
     Leaf,
-    TrendingUp,
+    User,
     Clock,
-    BarChart3,
-    Activity,
-    ChevronLeft,
-    ChevronRight,
+    CheckCircle,
+    TrendingUp,
+    Camera,
+    Mail,
+    X,
+    Save,
+    MoreHorizontal,
+    GraduationCap,
+    School,
+    Building2
 } from 'lucide-react';
 
-/* ─── Calendar Widget ───────────────────────────────────────── */
-const CalendarWidget = () => {
-    const [currentDate, setCurrentDate] = React.useState(new Date());
+/* ─── Schools Constant ───────────────────────────────────── */
+const CEBU_SCHOOLS = [
+    "University of San Carlos",
+    "University of Cebu",
+    "University of the Visayas",
+    "University of San Jose–Recoletos",
+    "Cebu Institute of Technology – University",
+    "Cebu Normal University",
+    "University of the Philippines Cebu",
+    "Southwestern University PHINMA",
+    "University of Southern Philippines Foundation",
+    "Cebu Technological University",
+    "Asian College of Technology",
+    "College of Technological Sciences – Cebu",
+    "Salazar Colleges of Science and Institute of Technology",
+    "Don Bosco Technical College – Cebu",
+    "Cebu Eastern College",
+    "CBD College",
+    "AMA Computer College – Cebu City",
+    "Benedicto College",
+    "St. Paul College Foundation – Cebu",
+    "Fashion Institute of Design and Arts Cebu"
+];
 
-    const daysInMonth = (date) => new Date(date.getFullYear(), date.getMonth() + 1, 0).getDate();
-    const firstDayOfMonth = (date) => new Date(date.getFullYear(), date.getMonth(), 1).getDay();
-
-    const prevMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
-    const nextMonth = () => setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
-
-    const monthNames = ["January", "February", "March", "April", "May", "June",
-        "July", "August", "September", "October", "November", "December"];
-
-    const today = new Date();
-    const isToday = (day) => {
-        return day === today.getDate() &&
-            currentDate.getMonth() === today.getMonth() &&
-            currentDate.getFullYear() === today.getFullYear();
-    };
-
-    const days = [];
-    const emptyDays = firstDayOfMonth(currentDate);
-    const totalDays = daysInMonth(currentDate);
-
-    for (let i = 0; i < emptyDays; i++) days.push(null);
-    for (let i = 1; i <= totalDays; i++) days.push(i);
-
-    return (
-        <div className="flex flex-col h-full w-full px-4 py-2">
-            <div className="flex items-center justify-between mb-6">
-                <div>
-                    <span className="block text-sm font-bold text-gray-400 uppercase tracking-wider">Schedule</span>
-                    <span className="text-3xl font-black text-gray-900 tracking-tight leading-tight">
-                        {monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}
-                    </span>
-                </div>
-                <div className="flex gap-2">
-                    <button onClick={prevMonth} className="p-2 rounded-full hover:bg-black/5 transition-colors text-gray-600 border border-transparent hover:border-black/5">
-                        <ChevronLeft size={20} />
-                    </button>
-                    <button onClick={nextMonth} className="p-2 rounded-full hover:bg-black/5 transition-colors text-gray-600 border border-transparent hover:border-black/5">
-                        <ChevronRight size={20} />
-                    </button>
-                </div>
-            </div>
-
-            <div className="grid grid-cols-7 mb-4">
-                {['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'].map(d => (
-                    <div key={d} className="text-center text-xs font-black text-gray-400 uppercase tracking-wider">
-                        {d}
-                    </div>
-                ))}
-            </div>
-
-            <div className="grid grid-cols-7 gap-2 flex-1 auto-rows-fr">
-                {days.map((day, i) => (
-                    <div
-                        key={i}
-                        className={`
-                            relative flex items-center justify-center rounded-xl text-lg font-bold transition-all duration-300 w-full h-full
-                            ${!day ? '' : 'hover:bg-white/60 hover:shadow-sm cursor-pointer border border-transparent hover:border-white/50'} 
-                            ${day && isToday(day) ? '!bg-[#c8ff00] !text-gray-900 shadow-sm scale-105' : 'text-gray-600'}
-                            ${!day ? 'invisible' : ''}
-                        `}
-                    >
-                        {day}
-                        {/* Example Event Dot */}
-                        {day === 15 && currentDate.getMonth() === 1 && (
-                            <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-orange-500 shadow-sm" />
-                        )}
-                        {day === 24 && currentDate.getMonth() === 1 && (
-                            <div className="absolute bottom-2 w-1.5 h-1.5 rounded-full bg-blue-500 shadow-sm" />
-                        )}
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
+/* ─── Logo File Map (local /School Logos/ folder) ────────── */
+const SCHOOL_LOGOS = {
+    "University of San Carlos": "/School Logos/University of San Carlos.jpg",
+    "University of Cebu": "/School Logos/Univerity Of Cebu.jpg",
+    "University of the Visayas": "/School Logos/University of the Visayas.jpg",
+    "University of San Jose–Recoletos": "/School Logos/University of San Jose- Recoletos.jpg",
+    "Cebu Institute of Technology – University": "/School Logos/Cebu Institute of Technology – University.png",
+    "Cebu Normal University": "/School Logos/Cebu Normal University.png",
+    "University of the Philippines Cebu": "/School Logos/University of the Philippines Cebu.jpg",
+    "Southwestern University PHINMA": "/School Logos/Southwestern University PHINMA.jpg",
+    "University of Southern Philippines Foundation": "/School Logos/University of Southern Philippines Foundation.jpg",
+    "Cebu Technological University": "/School Logos/Cebu Technological University.jpg",
+    "Asian College of Technology": "/School Logos/Asian College of Technology.jpg",
+    "College of Technological Sciences – Cebu": "/School Logos/College of Technological Sciences – Cebu.jpg",
+    "Salazar Colleges of Science and Institute of Technology": "/School Logos/Salazar Colleges of Science and Institute of Technology.png",
+    "Don Bosco Technical College – Cebu": "/School Logos/Don Bosco Technical College – Cebu.jpg",
+    "Cebu Eastern College": "/School Logos/Cebu Eastern College.jpg",
+    "CBD College": "/School Logos/CBD College.png",
+    "AMA Computer College – Cebu City": "/School Logos/AMA Computer College – Cebu City.jpg",
+    "Benedicto College": "/School Logos/Benedicto College.jpg",
+    "St. Paul College Foundation – Cebu": "/School Logos/St. Paul College Foundation – Cebu.jpg",
+    "Fashion Institute of Design and Arts Cebu": "/School Logos/Fashion Institute of Design and Arts Cebu.jpg"
 };
 
-/* ─── Glass Card ────────────────────────────────────────────── */
-const GlassCard = ({ children, className = '' }) => (
-    <div className={`liquid-glass p-6 ${className}`}>
-        {children}
+/* ─── Hero Module Card (Premium Glass) ────────────────────── */
+const ModuleCard = ({ title, code, progress, color = 'black' }) => (
+    <div className={`relative min-w-[280px] h-[180px] rounded-[32px] p-6 flex flex-col justify-between transition-all duration-300 hover:-translate-y-2 cursor-pointer overflow-hidden border group
+        ${color === 'black'
+            ? 'bg-gradient-to-br from-[#1a1a1a] to-[#050505] border-white/10 hover:border-[#ccff00]/30 shadow-lg shadow-black/20'
+            : 'bg-[#ccff00] text-black border-transparent'}
+    `}>
+        {/* Hover Glow */}
+        <div className="absolute inset-0 bg-[#ccff00] opacity-0 group-hover:opacity-5 blur-2xl transition-opacity duration-500" />
+
+        <div className="flex justify-between items-start z-10">
+            <div className={`w-10 h-10 rounded-full flex items-center justify-center backdrop-blur-md shadow-inner
+                ${color === 'black' ? 'bg-[#ccff00] text-black' : 'bg-black text-white'}
+            `}>
+                <div className="font-bold text-xs">{code.substring(0, 2)}</div>
+            </div>
+            <div className={`p-2.5 rounded-full backdrop-blur-sm border
+                ${color === 'black' ? 'bg-white/5 border-white/10 text-white' : 'bg-black/5 border-black/5 text-black'}
+            `}>
+                <TrendingUp size={16} />
+            </div>
+        </div>
+
+        <div className="z-10">
+            <p className={`text-lg font-medium tracking-tight overflow-hidden text-ellipsis whitespace-nowrap mb-3
+                 ${color === 'black' ? 'text-white' : 'text-black'}
+            `}>{title}</p>
+
+            <div className={`w-full h-1.5 rounded-full mb-3 overflow-hidden
+                 ${color === 'black' ? 'bg-white/10' : 'bg-black/10'}
+            `}>
+                <div
+                    className={`h-full rounded-full ${color === 'black' ? 'bg-[#ccff00]' : 'bg-black'}`}
+                    style={{ width: `${progress}%` }}
+                />
+            </div>
+
+            <div className="flex justify-between items-end">
+                <p className={`text-[10px] font-bold uppercase tracking-widest opacity-60
+                    ${color === 'black' ? 'text-gray-300' : 'text-black'}
+                `}>{code}</p>
+                <p className={`font-bold text-lg ${color === 'black' ? 'text-white' : 'text-black'}`}>{progress}%</p>
+            </div>
+        </div>
     </div>
 );
 
-/* ─── Donut Chart ───────────────────────────────────────────── */
-const DonutChart = ({ percentage, size = 110, strokeWidth = 10, color = '#e8a030' }) => {
-    const radius = (size - strokeWidth) / 2;
-    const circumference = 2 * Math.PI * radius;
-    const offset = circumference - (percentage / 100) * circumference;
-    const center = size / 2;
-
+/* ─── KPI Card (Premium Bento) ────────────────────────────── */
+const KpiCard = ({ title, value, icon: Icon, bg = 'lime', subtext }) => {
+    const isLime = bg === 'lime';
     return (
-        <div className="relative" style={{ width: size, height: size }}>
-            <svg width={size} height={size} className="transform -rotate-90">
-                <circle cx={center} cy={center} r={radius} stroke="rgba(0,0,0,0.06)" strokeWidth={strokeWidth} fill="none" />
-                <circle
-                    cx={center} cy={center} r={radius}
-                    stroke={color} strokeWidth={strokeWidth} fill="none"
-                    strokeDasharray={circumference} strokeDashoffset={offset}
-                    strokeLinecap="round"
-                    style={{ transition: 'stroke-dashoffset 1.2s ease-out' }}
-                />
-            </svg>
-            <div className="absolute inset-0 flex flex-col items-center justify-center">
-                <span className="text-2xl font-black text-gray-900">{percentage}%</span>
+        <div className={`relative h-32 rounded-[32px] p-6 flex flex-col justify-between overflow-hidden group hover:scale-[1.02] transition-all duration-300 border
+            ${isLime
+                ? 'bg-[#ccff00] text-black border-[#ccff00] shadow-[0_8px_30px_rgba(204,255,0,0.2)]'
+                : 'bg-[#0f0f0f] text-white border-white/10 shadow-lg'}
+        `}>
+            {/* Shine Effect */}
+            <div className={`absolute top-0 right-0 w-32 h-32 bg-white opacity-0 group-hover:opacity-10 blur-3xl rounded-full pointer-events-none transition-opacity duration-500
+                 ${isLime ? 'mix-blend-overlay' : 'mix-blend-normal'}
+             `} />
+
+            <div className="flex justify-between items-start z-10">
+                <span className={`text-[10px] font-bold uppercase tracking-widest ${isLime ? 'text-black/60' : 'text-gray-500'}`}>{title}</span>
+                <div className={`w-8 h-8 rounded-full flex items-center justify-center shadow-sm
+                    ${isLime ? 'bg-black text-white' : 'bg-white/10 text-white backdrop-blur-sm border border-white/10'}
+                `}>
+                    <Icon size={14} />
+                </div>
+            </div>
+
+            <div className="z-10">
+                <div className="flex items-baseline gap-2">
+                    <span className="text-3xl font-bold tracking-tight">{value}</span>
+                </div>
+                {subtext && <span className={`text-xs font-medium pl-0.5 block mt-1 ${isLime ? 'text-black/70' : 'text-gray-500'}`}>{subtext}</span>}
             </div>
         </div>
     );
 };
 
-/* ─── Gauge Arc ─────────────────────────────────────────────── */
-const GaugeArc = ({ value, max = 100, size = 140, color = '#e8a030' }) => {
-    const pct = value / max;
-    const radius = (size - 12) / 2;
-    const startAngle = -220;
-    const endAngle = 40;
-    const totalAngle = endAngle - startAngle;
-    const valueAngle = startAngle + totalAngle * pct;
+/* ─── Activity Item (Polished List) ───────────────────────── */
+const ActivityItem = ({ number, label, sublabel, dark = false }) => (
+    <div className={`flex items-center gap-5 p-5 rounded-[24px] group transition-all duration-300 cursor-pointer border
+        ${dark
+            ? 'bg-[#0f0f0f] text-white border-white/5 shadow-xl shadow-black/10'
+            : 'bg-transparent border-transparent hover:bg-white hover:border-gray-100 hover:shadow-md'}
+    `}>
+        <div className={`w-12 h-12 rounded-2xl flex items-center justify-center text-sm font-bold shrink-0 transition-transform group-hover:scale-110 duration-300
+            ${dark ? 'bg-[#ccff00] text-black shadow-[0_0_15px_rgba(204,255,0,0.3)]' : 'bg-gray-100 text-gray-900 group-hover:bg-black group-hover:text-white'}
+        `}>
+            {number}
+        </div>
+        <div>
+            <p className={`font-semibold text-sm leading-snug ${dark ? 'text-white' : 'text-gray-900'}`}>{label}</p>
+            <p className={`text-xs mt-1 font-medium ${dark ? 'text-gray-400' : 'text-gray-500'}`}>{sublabel}</p>
+        </div>
+        <div className="ml-auto opacity-0 group-hover:opacity-100 transition-opacity -translate-x-2 group-hover:translate-x-0 duration-300">
+            <ArrowUpRight size={16} className={dark ? 'text-[#ccff00]' : 'text-black'} />
+        </div>
+    </div>
+);
 
-    const polarToCart = (cx, cy, r, angle) => {
-        const rad = (angle * Math.PI) / 180;
-        return { x: cx + r * Math.cos(rad), y: cy + r * Math.sin(rad) };
+/* ─── Main Module ─────────────────────────────────────────── */
+const DashboardModule = ({ user, onProfileUpdate }) => {
+    // Profile State
+    const [profile, setProfile] = useState({
+        firstName: user?.first_name || '',
+        lastName: user?.last_name || '',
+        name: user?.username || 'Student',
+        email: user?.email || '',
+        phone: user?.phone || '',
+        avatar: user?.avatar || null,
+        schoolLogo: user?.schoolLogo || null,
+        school: user?.school || ''
+    });
+    const [isEditing, setIsEditing] = useState(false);
+    const [isUploading, setIsUploading] = useState(false);
+
+    // Sync with User prop if it changes
+    useEffect(() => {
+        if (user?.username) {
+            setProfile(prev => ({
+                ...prev,
+                firstName: user.first_name || prev.firstName,
+                lastName: user.last_name || prev.lastName,
+                name: user.username,
+                email: user.email || prev.email,
+                phone: user.phone || prev.phone,
+                avatar: user.avatar || prev.avatar,
+                schoolLogo: user.schoolLogo || prev.schoolLogo,
+                school: user.school || prev.school
+            }));
+        }
+    }, [user]);
+
+    // Helper: Resize image using Canvas and return HD data URL
+    const resizeImage = (file, maxSize = 800) => {
+        return new Promise((resolve, reject) => {
+            const reader = new FileReader();
+            reader.onload = (event) => {
+                const img = new Image();
+                img.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    let w = img.width, h = img.height;
+                    // Scale down proportionally only if larger than max
+                    if (w > maxSize || h > maxSize) {
+                        const ratio = Math.min(maxSize / w, maxSize / h);
+                        w = Math.round(w * ratio);
+                        h = Math.round(h * ratio);
+                    }
+                    canvas.width = w;
+                    canvas.height = h;
+                    const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
+                    ctx.drawImage(img, 0, 0, w, h);
+                    resolve(canvas.toDataURL('image/jpeg', 0.92)); // HD Quality JPEG
+                };
+                img.onerror = () => reject(new Error('Failed to load image'));
+                img.src = event.target.result;
+            };
+            reader.onerror = () => reject(new Error('Failed to read file'));
+            reader.readAsDataURL(file);
+        });
     };
 
-    const center = size / 2;
-    const bgStart = polarToCart(center, center, radius, startAngle);
-    const bgEnd = polarToCart(center, center, radius, endAngle);
-    const valEnd = polarToCart(center, center, radius, valueAngle);
+    const handleUpload = async (e, type) => {
+        const file = e.target.files[0];
+        if (!file) return;
 
-    const bgArc = `M ${bgStart.x} ${bgStart.y} A ${radius} ${radius} 0 1 1 ${bgEnd.x} ${bgEnd.y}`;
-    const valArc = `M ${bgStart.x} ${bgStart.y} A ${radius} ${radius} 0 ${pct > 0.5 ? 1 : 0} 1 ${valEnd.x} ${valEnd.y}`;
+        try {
+            setIsUploading(true);
+
+            // 1. Resize & convert to base64 (no Supabase Storage needed)
+            const imageDataUrl = await resizeImage(file, 800);
+
+            const stateField = type === 'avatar' ? 'avatar' : 'schoolLogo';
+            const dbField = type === 'avatar' ? 'avatar' : 'school_logo';
+
+            // 2. Update local state immediately
+            setProfile(prev => ({ ...prev, [stateField]: imageDataUrl }));
+
+            // 3. Persist to localStorage
+            const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            localStorage.setItem('user', JSON.stringify({ ...storedUser, [stateField]: imageDataUrl }));
+
+            // 4. Try saving to database (non-blocking)
+            const { error: updateError } = await supabase
+                .from('profiles')
+                .update({ [dbField]: imageDataUrl })
+                .eq('username', profile.name);
+
+            if (updateError) {
+                console.warn("DB update info:", updateError.message);
+                // Still works locally even if DB column doesn't exist yet
+            }
+
+        } catch (error) {
+            console.error(`Error processing ${type}:`, error);
+            alert(`Failed to process image. Please try a different file.`);
+        } finally {
+            setIsUploading(false);
+        }
+    };
+
+    const handleSchoolChange = (e) => {
+        const selectedSchool = e.target.value;
+        const logoPath = SCHOOL_LOGOS[selectedSchool] || null;
+
+        setProfile(prev => ({
+            ...prev,
+            school: selectedSchool,
+            schoolLogo: logoPath
+        }));
+    };
+
+    const handleSaveProfile = async () => {
+        try {
+            const updates = {
+                username: profile.name,
+                first_name: profile.firstName,
+                last_name: profile.lastName,
+                email: profile.email.trim().toLowerCase(),
+                phone: profile.phone,
+                school: profile.school,
+                school_logo: profile.schoolLogo
+            };
+
+            const { error } = await supabase
+                .from('profiles')
+                .update(updates)
+                .eq('username', user.username);
+
+            if (error) console.warn("Save profile warning:", error.message);
+
+            const storedUser = JSON.parse(localStorage.getItem('user') || '{}');
+            localStorage.setItem('user', JSON.stringify({
+                ...storedUser,
+                username: profile.name,
+                first_name: profile.firstName,
+                last_name: profile.lastName,
+                email: profile.email.trim().toLowerCase(),
+                phone: profile.phone,
+                school: profile.school,
+                schoolLogo: profile.schoolLogo
+            }));
+
+            setIsEditing(false);
+            // Notify parent to refresh user data in sidebar
+            if (onProfileUpdate) onProfileUpdate();
+        } catch (error) {
+            console.error('Error saving profile:', error);
+        }
+    };
 
     return (
-        <div className="relative flex justify-center" style={{ width: '100%', height: size * 0.65 }}>
-            <svg width={size} height={size} style={{ marginTop: -size * 0.18 }}>
-                <path d={bgArc} fill="none" stroke="rgba(0,0,0,0.06)" strokeWidth="10" strokeLinecap="round" />
-                <path d={valArc} fill="none" stroke={color} strokeWidth="10" strokeLinecap="round" />
-            </svg>
-            <div className="absolute bottom-0 left-1/2 -translate-x-1/2 text-center">
-                <span className="text-2xl font-black text-gray-900">{value}</span>
-                <span className="text-sm text-gray-500 font-bold">/{max}</span>
+        <div className="w-full bg-[#F2F4F6] min-h-full rounded-[48px] p-8 -mt-2 text-[#050505] font-sans relative overflow-hidden">
+
+            {/* ── Edit Profile Modal (Portal) ── */}
+            {isEditing && createPortal(
+                <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
+                    <div className="bg-[#0a0a0a] w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-[40px] border border-white/10 p-8 relative shadow-2xl animate-in zoom-in-95 duration-300">
+                        {/* Glow Effect */}
+                        <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#ccff00] blur-[120px] opacity-10 pointer-events-none" />
+
+                        <button
+                            onClick={() => setIsEditing(false)}
+                            className="absolute top-6 right-6 w-10 h-10 rounded-full bg-white/5 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all z-20"
+                        >
+                            <X size={20} />
+                        </button>
+
+                        <div className="text-center mb-6 relative z-10">
+                            <h3 className="text-2xl font-medium tracking-tight text-white">Edit Profile</h3>
+                            <p className="text-gray-500 text-sm mt-1">Update your personal details</p>
+                        </div>
+
+                        <div className="space-y-6 relative z-10">
+                            {/* Avatar Upload */}
+                            <div className="flex flex-col items-center gap-4">
+                                <div className="relative group cursor-pointer inline-block">
+                                    <div className="w-28 h-28 rounded-full border-4 border-[#1a1a1a] shadow-xl flex items-center justify-center overflow-hidden bg-black relative">
+                                        <div className="absolute inset-0 bg-neutral-800 animate-pulse" />
+                                        {profile.avatar ? (
+                                            <img src={profile.avatar} alt="Profile" className="w-full h-full object-cover relative z-10" />
+                                        ) : (
+                                            <User size={40} className="text-neutral-600 relative z-10" />
+                                        )}
+                                    </div>
+                                    <div className="absolute inset-0 rounded-full border-2 border-[#ccff00] opacity-0 group-hover:opacity-100 transition-opacity scale-105" />
+                                    <label className="absolute bottom-0 right-0 w-8 h-8 bg-[#ccff00] rounded-full flex items-center justify-center text-black shadow-lg cursor-pointer hover:scale-110 transition-transform z-20">
+                                        <Camera size={14} />
+                                        <input type="file" className="hidden" accept="image/*" onChange={(e) => handleUpload(e, 'avatar')} />
+                                    </label>
+                                </div>
+                            </div>
+
+                            {/* Inputs */}
+                            <div className="space-y-4">
+                                {/* First + Last Name Row */}
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="group">
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block ml-1">First Name</label>
+                                        <div className="bg-[#151515] rounded-2xl px-4 h-14 flex items-center gap-3 border border-white/5 focus-within:border-[#ccff00]/50 focus-within:bg-[#1a1a1a] transition-all">
+                                            <input
+                                                value={profile.firstName}
+                                                onChange={e => setProfile({ ...profile, firstName: e.target.value })}
+                                                className="bg-transparent text-white w-full h-full focus:outline-none text-sm font-medium placeholder:text-gray-700"
+                                                placeholder="First name"
+                                            />
+                                        </div>
+                                    </div>
+                                    <div className="group">
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block ml-1">Last Name</label>
+                                        <div className="bg-[#151515] rounded-2xl px-4 h-14 flex items-center gap-3 border border-white/5 focus-within:border-[#ccff00]/50 focus-within:bg-[#1a1a1a] transition-all">
+                                            <input
+                                                value={profile.lastName}
+                                                onChange={e => setProfile({ ...profile, lastName: e.target.value })}
+                                                className="bg-transparent text-white w-full h-full focus:outline-none text-sm font-medium placeholder:text-gray-700"
+                                                placeholder="Last name"
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Email (Gmail) */}
+                                <div className="group">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block ml-1">Gmail / Email</label>
+                                    <div className="bg-[#151515] rounded-2xl px-4 h-14 flex items-center gap-3 border border-white/5 focus-within:border-[#ccff00]/50 focus-within:bg-[#1a1a1a] transition-all">
+                                        <Mail size={20} className="text-gray-600 group-focus-within:text-[#ccff00] transition-colors shrink-0" />
+                                        <input
+                                            type="email"
+                                            value={profile.email}
+                                            onChange={e => setProfile({ ...profile, email: e.target.value })}
+                                            className="bg-transparent text-white w-full h-full focus:outline-none text-sm font-medium placeholder:text-gray-700"
+                                            placeholder="yourname@gmail.com"
+                                        />
+                                    </div>
+                                    <p className="text-[9px] text-gray-600 mt-1.5 ml-1">You can also use this email to sign in</p>
+                                </div>
+
+                                {/* Phone Number */}
+                                <div className="group">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block ml-1">Phone Number</label>
+                                    <div className="bg-[#151515] rounded-2xl px-4 h-14 flex items-center gap-3 border border-white/5 focus-within:border-[#ccff00]/50 focus-within:bg-[#1a1a1a] transition-all">
+                                        <span className="text-gray-500 text-sm font-medium shrink-0">+63</span>
+                                        <input
+                                            type="tel"
+                                            value={profile.phone}
+                                            onChange={e => setProfile({ ...profile, phone: e.target.value })}
+                                            className="bg-transparent text-white w-full h-full focus:outline-none text-sm font-medium placeholder:text-gray-700"
+                                            placeholder="9XX XXX XXXX"
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* School Dropdown */}
+                                <div className="group">
+                                    <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block ml-1">School / University</label>
+                                    <div className="bg-[#151515] rounded-2xl px-4 h-14 flex items-center gap-3 border border-white/5 focus-within:border-[#ccff00]/50 focus-within:bg-[#1a1a1a] transition-all relative">
+                                        <Building2 size={20} className="text-gray-600 group-focus-within:text-[#ccff00] transition-colors" />
+                                        <select
+                                            value={profile.school}
+                                            onChange={handleSchoolChange}
+                                            className="bg-transparent text-white w-full h-full focus:outline-none text-sm font-medium appearance-none cursor-pointer [&>option]:bg-[#1a1a1a] [&>option]:text-white"
+                                        >
+                                            <option value="" disabled>Select your school</option>
+                                            {CEBU_SCHOOLS.map((school) => (
+                                                <option key={school} value={school}>{school}</option>
+                                            ))}
+                                        </select>
+                                        <ChevronDown size={16} className="absolute right-4 text-gray-500 pointer-events-none" />
+                                    </div>
+                                </div>
+
+                                {/* University Logo Preview (Auto-selected, not uploadable) */}
+                                {profile.school && profile.schoolLogo && (
+                                    <div>
+                                        <label className="text-[10px] font-bold text-gray-500 uppercase tracking-widest mb-2 block ml-1">University Logo</label>
+                                        <div className="bg-[#151515] rounded-2xl px-4 py-3 flex items-center gap-3 border border-white/5">
+                                            <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center shrink-0 p-1 overflow-hidden">
+                                                <img src={profile.schoolLogo} alt={profile.school} className="w-full h-full object-contain" />
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="text-white text-sm font-medium truncate">{profile.school}</p>
+                                                <p className="text-xs text-[#ccff00]/70">Logo auto-selected ✓</p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            <button
+                                onClick={handleSaveProfile}
+                                className="w-full h-14 bg-[#ccff00] hover:bg-[#bbe600] active:scale-[0.98] text-black font-bold text-sm rounded-2xl mt-4 transition-all flex items-center justify-center gap-2 shadow-[0_0_20px_rgba(204,255,0,0.2)]"
+                            >
+                                <Save size={18} />
+                                Save Changes
+                            </button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )
+            }
+
+            {/* ── Header ── */}
+            <div className="flex items-center justify-between mb-8 overflow-x-auto scrollbar-hide">
+                <h2 className="text-3xl font-medium tracking-tight">Overview</h2>
+                <div className="flex items-center gap-3 bg-white px-4 py-2 rounded-full shadow-sm shadow-gray-100 text-sm font-bold text-gray-500 border border-white">
+                    <Clock size={16} className="text-[#ccff00] fill-black" />
+                    <span className="text-black">Spring Term 2026</span>
+                </div>
             </div>
-        </div>
-    );
-};
 
-/* ─── Mini Bar Graph ────────────────────────────────────────── */
-const MiniBarGraph = ({ data, highlight = -1, height = 64 }) => {
-    const max = Math.max(...data);
-    return (
-        <div className="flex items-end gap-1 w-full" style={{ height }}>
-            {data.map((val, i) => (
-                <div
-                    key={i}
-                    className="flex-1 rounded-t-lg transition-all duration-500"
-                    style={{
-                        height: `${(val / max) * 100}%`,
-                        minHeight: '4px',
-                        background: i === highlight ? '#e8a030' : 'rgba(0,0,0,0.08)',
-                    }}
-                />
-            ))}
-        </div>
-    );
-};
+            {/* ── Hero Section (Premium Black Card) ── */}
+            <div className="w-full bg-[#050505] rounded-[48px] p-10 relative overflow-hidden mb-10 shadow-2xl shadow-black/20 group">
+                <div className="absolute inset-0 bg-gradient-to-br from-[#111] to-black" />
+                <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#ccff00] blur-[150px] opacity-[0.07] rounded-full pointer-events-none group-hover:opacity-[0.1] transition-opacity duration-700" />
+                <div className="absolute bottom-0 left-20 w-[300px] h-[300px] bg-blue-500 blur-[120px] opacity-[0.05] rounded-full pointer-events-none" />
 
-/* ─── Main Dashboard Module ─────────────────────────────────── */
-const DashboardModule = ({ user }) => {
-    const weeklyData = [65, 72, 80, 88, 75, 82, 90, 68, 85, 92, 78, 70];
+                <div className="flex flex-col lg:flex-row gap-10 relative z-10">
+                    <div className="flex-1 max-w-lg pt-4">
+                        <div className="flex items-center gap-3 mb-8">
+                            <span className="bg-[#1a1a1a] text-[#ccff00] px-4 py-1.5 rounded-full text-[10px] font-bold uppercase tracking-widest border border-white/5 shadow-lg shadow-black/50 flex items-center gap-2">
+                                <span className="w-2 h-2 rounded-full bg-[#ccff00] animate-pulse" />
+                                In Progress
+                            </span>
+                        </div>
 
-    return (
-        <div className="w-full flex flex-col gap-8 py-6 pb-20">
+                        <h1 className="text-white text-4xl lg:text-5xl font-medium tracking-tight mb-8 leading-[1.1]">
+                            Mastering <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#ccff00] to-green-400">React Patterns</span> & Architecture.
+                        </h1>
 
-            {/* ─── TOP SECTION ─────────────────────────────── */}
+                        <div className="flex items-center gap-6">
+                            <button className="bg-[#ccff00] text-black px-8 py-4 rounded-full font-bold text-sm hover:bg-[#b3e600] transition-all hover:scale-105 active:scale-95 shadow-[0_0_30px_rgba(204,255,0,0.2)] flex items-center gap-2">
+                                Continue Lesson
+                                <ArrowUpRight size={18} />
+                            </button>
+                            <span className="text-gray-500 text-sm font-medium">Module 12 of 24</span>
+                        </div>
+
+                        <div className="mt-10 flex gap-16 border-t border-white/5 pt-6">
+                            <div>
+                                <p className="text-3xl font-bold text-white tracking-tight">82%</p>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Completion</p>
+                            </div>
+                            <div>
+                                <p className="text-3xl font-bold text-white tracking-tight">14h</p>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Spent</p>
+                            </div>
+                            <div>
+                                <p className="text-3xl font-bold text-white tracking-tight">A+</p>
+                                <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest mt-2">Avg Grade</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="flex-1 min-w-0 flex items-center justify-end">
+                        {(() => {
+                            // Calendar state & logic inline
+                            const today = new Date();
+                            const [calDate, setCalDate] = React.useState(new Date(today.getFullYear(), today.getMonth(), 1));
+                            const [hoveredDay, setHoveredDay] = React.useState(null);
+
+                            const year = calDate.getFullYear();
+                            const month = calDate.getMonth();
+                            const monthNames = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
+                            const dayNames = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+
+                            // Activity dates with start and deadline
+                            const activities = [
+                                { name: "React Component Library", start: "2026-02-10", deadline: "2026-02-17", module: "Frontend" },
+                                { name: "API Integration", start: "2026-02-12", deadline: "2026-02-19", module: "Backend" },
+                                { name: "UI/UX Design", start: "2026-02-14", deadline: "2026-02-21", module: "Design" },
+                                { name: "Database Schema", start: "2026-02-08", deadline: "2026-02-15", module: "Database" },
+                                { name: "System Architecture", start: "2026-02-15", deadline: "2026-02-22", module: "System" },
+                                { name: "REST API Design", start: "2026-02-11", deadline: "2026-02-18", module: "Backend" },
+                            ];
+
+                            // Build event map: { 'YYYY-MM-DD': [{name, type}] }
+                            const eventMap = {};
+                            activities.forEach(a => {
+                                const addEvent = (dateStr, type) => {
+                                    if (!eventMap[dateStr]) eventMap[dateStr] = [];
+                                    eventMap[dateStr].push({ name: a.name, type, module: a.module });
+                                };
+                                addEvent(a.start, 'start');
+                                addEvent(a.deadline, 'deadline');
+                            });
+
+                            // Build calendar grid
+                            const firstDay = new Date(year, month, 1).getDay();
+                            const daysInMonth = new Date(year, month + 1, 0).getDate();
+                            const totalCells = Math.ceil((firstDay + daysInMonth) / 7) * 7;
+                            const cells = [];
+                            for (let i = 0; i < totalCells; i++) {
+                                const dayNum = i - firstDay + 1;
+                                cells.push(dayNum >= 1 && dayNum <= daysInMonth ? dayNum : null);
+                            }
+
+                            const isToday = (d) => d === today.getDate() && month === today.getMonth() && year === today.getFullYear();
+                            const dateKey = (d) => `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+                            return (
+                                <div className="bg-[#0d0d0d] rounded-[28px] border border-white/5 p-6 relative overflow-hidden max-w-[400px] w-full">
+                                    {/* Warm glow */}
+                                    <div className="absolute top-0 right-0 w-40 h-40 bg-amber-500 blur-[100px] opacity-[0.06] rounded-full pointer-events-none" />
+
+                                    {/* Header */}
+                                    <div className="flex items-center justify-between mb-3 relative z-10">
+                                        <div>
+                                            <p className="text-gray-500 text-[10px] font-bold uppercase tracking-widest mb-0.5">{String(month + 1).padStart(2, '0')} \ {year}</p>
+                                            <h3 className="text-white text-xl font-bold tracking-tight">{monthNames[month]}</h3>
+                                        </div>
+                                        <div className="flex gap-2">
+                                            <button
+                                                onClick={() => setCalDate(new Date(year, month - 1, 1))}
+                                                className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all"
+                                            >
+                                                <ChevronDown size={14} className="rotate-90" />
+                                            </button>
+                                            <button
+                                                onClick={() => setCalDate(new Date(year, month + 1, 1))}
+                                                className="w-8 h-8 rounded-full border border-white/10 flex items-center justify-center text-gray-400 hover:bg-white/10 hover:text-white transition-all"
+                                            >
+                                                <ChevronDown size={14} className="-rotate-90" />
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                    {/* Day-of-week header */}
+                                    <div className="grid grid-cols-7 gap-1 mb-1 relative z-10">
+                                        {dayNames.map(d => (
+                                            <div key={d} className="h-8 flex items-center justify-center text-[10px] font-bold uppercase tracking-wider" style={{
+                                                background: 'linear-gradient(135deg, #ccff00 0%, #f59e0b 100%)',
+                                                WebkitBackgroundClip: 'text',
+                                                WebkitTextFillColor: 'transparent',
+                                            }}>{d}</div>
+                                        ))}
+                                    </div>
+
+                                    {/* Calendar Grid */}
+                                    <div className="grid grid-cols-7 gap-1 relative z-10">
+                                        {cells.map((day, i) => {
+                                            if (day === null) return <div key={i} className="h-10" />;
+                                            const dk = dateKey(day);
+                                            const events = eventMap[dk] || [];
+                                            const hasStart = events.some(e => e.type === 'start');
+                                            const hasDeadline = events.some(e => e.type === 'deadline');
+                                            const todayCheck = isToday(day);
+
+                                            return (
+                                                <div
+                                                    key={i}
+                                                    className={`h-10 flex flex-col items-center justify-center rounded-lg cursor-pointer relative transition-all duration-200
+                                                        ${todayCheck ? 'bg-[#ccff00]/10 ring-1 ring-[#ccff00]/40' : 'hover:bg-white/5'}
+                                                    `}
+                                                    onMouseEnter={() => events.length > 0 && setHoveredDay(dk)}
+                                                    onMouseLeave={() => setHoveredDay(null)}
+                                                >
+                                                    <span className={`text-sm font-medium ${todayCheck ? 'text-[#ccff00] font-bold' : 'text-gray-300'}`}>
+                                                        {day}
+                                                    </span>
+                                                    {events.length > 0 && (
+                                                        <div className="flex gap-0.5 mt-0.5">
+                                                            {hasStart && <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />}
+                                                            {hasDeadline && <span className="w-1.5 h-1.5 rounded-full bg-amber-400" />}
+                                                        </div>
+                                                    )}
+                                                    {hoveredDay === dk && events.length > 0 && (
+                                                        <div className="absolute bottom-full mb-2 left-1/2 -translate-x-1/2 bg-[#1a1a1a] border border-white/10 rounded-xl px-3 py-2 min-w-[150px] z-50 shadow-2xl shadow-black/80 pointer-events-none">
+                                                            {events.map((ev, idx) => (
+                                                                <div key={idx} className="flex items-center gap-2 py-0.5">
+                                                                    <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${ev.type === 'start' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
+                                                                    <span className="text-[10px] text-white truncate">{ev.name}</span>
+                                                                    <span className={`text-[8px] font-bold uppercase ml-auto shrink-0 ${ev.type === 'start' ? 'text-emerald-400' : 'text-amber-400'}`}>
+                                                                        {ev.type === 'start' ? 'Start' : 'Due'}
+                                                                    </span>
+                                                                </div>
+                                                            ))}
+                                                        </div>
+                                                    )}
+                                                </div>
+                                            );
+                                        })}
+                                    </div>
+
+                                    {/* Legend */}
+                                    <div className="flex items-center gap-4 mt-3 pt-2 border-t border-white/5 relative z-10">
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full bg-emerald-400" />
+                                            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Start Date</span>
+                                        </div>
+                                        <div className="flex items-center gap-1.5">
+                                            <span className="w-2 h-2 rounded-full bg-amber-400" />
+                                            <span className="text-[9px] text-gray-500 font-bold uppercase tracking-wider">Deadline</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            );
+                        })()}
+                    </div>
+                </div>
+            </div>
+
+            {/* ── Bottom Grid ── */}
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-                {/* ── LEFT COLUMN ──────────────────────── */}
-                <div className="lg:col-span-4 flex flex-col gap-6">
+                {/* 1. Student Profile Card */}
+                <div
+                    onClick={() => setIsEditing(true)}
+                    className="lg:col-span-3 relative h-full min-h-[360px] rounded-[40px] overflow-hidden shadow-lg shadow-black/5 group cursor-pointer bg-black"
+                >
+                    {/* Dynamic Background */}
+                    <div className="absolute inset-0 bg-[#080808]">
+                        {profile.avatar ? (
+                            <>
+                                <img src={profile.avatar} alt="User" className="w-full h-full object-cover opacity-80 transition-transform duration-700 group-hover:scale-105" />
+                                <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent opacity-90" />
+                            </>
+                        ) : (
+                            <>
+                                <div className="absolute inset-0 bg-gradient-to-b from-[#1a1a1a] to-black" />
+                                <div className="absolute inset-0 flex items-center justify-center">
+                                    <User size={140} strokeWidth={0.5} className="text-white/20 group-hover:text-white/30 transition-colors duration-500" />
+                                </div>
+                            </>
+                        )}
 
-                    {/* Page Title */}
-                    <div className="pl-1">
-                        <h1 className="text-4xl lg:text-5xl font-black text-gray-900 leading-none tracking-tighter drop-shadow-sm">
-                            Training Hub
-                        </h1>
-                        <p className="text-sm text-gray-600 mt-2 leading-relaxed font-semibold max-w-[280px]">
-                            Welcome back, <span className="text-gray-900 font-black">{user?.username || 'Intern'}</span>.
-                        </p>
+                        {/* Edit Overlay Hint */}
+                        <div className="absolute inset-0 flex items-center justify-center bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity backdrop-blur-[2px]">
+                            <div className="bg-white/10 backdrop-blur-md px-4 py-2 rounded-full border border-white/20 flex items-center gap-2">
+                                <Settings className="text-white" size={16} />
+                                <span className="text-white text-xs font-bold uppercase tracking-wider">Edit Profile</span>
+                            </div>
+                        </div>
                     </div>
 
-                    {/* Card: Hours Logged */}
-                    <GlassCard className="flex-1 flex flex-col justify-center min-h-[160px]">
-                        <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs text-gray-600 font-bold uppercase tracking-wide">Hours Logged</span>
-                            <ArrowUpRight size={18} className="text-gray-400" />
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-orange-100 flex items-center justify-center shadow-sm">
-                                <Clock size={24} className="text-orange-500" />
+                    {/* Glass Bottom Bar */}
+                    <div className="absolute bottom-6 left-4 right-4 p-5 rounded-[24px] bg-white/10 backdrop-blur-xl border border-white/10 flex items-center justify-between transition-all duration-300 group-hover:bg-white/15">
+                        <div className="flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-[#ccff00] flex items-center justify-center text-black font-bold text-sm text-transform uppercase">
+                                {(profile.firstName || profile.name).charAt(0)}
                             </div>
-                            <div>
-                                <span className="text-4xl font-black text-gray-900 leading-none">127.5</span>
-                                <span className="text-sm text-gray-500 font-bold ml-1">hrs</span>
-                            </div>
-                        </div>
-                        <p className="text-[10px] text-gray-500 mt-3 font-bold uppercase tracking-wider">February 2026</p>
-                    </GlassCard>
-
-                    {/* Card: Tasks Done */}
-                    <GlassCard className="flex-1 flex flex-col justify-center min-h-[160px]">
-                        <div className="flex items-center justify-between mb-3">
-                            <span className="text-xs text-gray-600 font-bold uppercase tracking-wide">Tasks Done</span>
-                            <ArrowUpRight size={18} className="text-gray-400" />
-                        </div>
-                        <div className="flex items-center gap-4">
-                            <div className="w-12 h-12 rounded-xl bg-green-100 flex items-center justify-center shadow-sm">
-                                <Leaf size={24} className="text-green-500" />
-                            </div>
-                            <div>
-                                <span className="text-4xl font-black text-gray-900 leading-none">42</span>
-                                <span className="text-sm text-gray-500 font-bold ml-1">tasks</span>
+                            <div className="overflow-hidden">
+                                <p className="text-white font-medium text-sm tracking-tight leading-none mb-1 truncate max-w-[120px]">
+                                    {profile.firstName && profile.lastName
+                                        ? `${profile.firstName} ${profile.lastName}`
+                                        : profile.name}
+                                </p>
+                                <p className="text-gray-400 text-[10px] font-bold uppercase tracking-wider">Lifewood PH Intern</p>
                             </div>
                         </div>
-                        <p className="text-[10px] text-gray-500 mt-3 font-bold uppercase tracking-wider">3 Modules Completed</p>
-                    </GlassCard>
+                        {/* School Logo Section - Highlighted */}
+                        <div className="w-14 h-14 rounded-full bg-white flex items-center justify-center overflow-hidden border-2 border-white/20 shadow-lg shrink-0">
+                            {profile.schoolLogo ? (
+                                <img src={profile.schoolLogo} alt="School" className="w-full h-full object-contain p-0.5" />
+                            ) : (
+                                <GraduationCap size={24} className="text-black" />
+                            )}
+                        </div>
+                    </div>
                 </div>
 
-                {/* ── RIGHT COLUMN ─────────────────────── */}
-                <div className="lg:col-span-8 h-full">
-                    <GlassCard className="h-full flex flex-col justify-center">
-                        <CalendarWidget />
-                    </GlassCard>
+                {/* 2. Recent Activity (Clean White Theme) */}
+                <div className="lg:col-span-4 bg-white/60 backdrop-blur-md rounded-[40px] p-8 shadow-sm border border-white">
+                    <div className="flex justify-between items-center mb-8">
+                        <div>
+                            <h3 className="text-xl font-medium tracking-tight">Activity</h3>
+                            <p className="text-sm text-gray-500 mt-1">Recent updates</p>
+                        </div>
+                        <button className="w-10 h-10 rounded-full bg-white border border-gray-100 flex items-center justify-center hover:bg-gray-50 transition-colors shadow-sm">
+                            <MoreHorizontal size={18} className="text-gray-400" />
+                        </button>
+                    </div>
+
+                    <div className="space-y-4">
+                        <ActivityItem number="98%" label="Quiz Score: React Hooks" sublabel="27 Feb, 2026" dark={true} />
+                        <ActivityItem number="x2" label="Productivity Streak" sublabel="Increased limits on tasks" />
+                        <ActivityItem number="2%" label="Optimization Bonus" sublabel="Code quality improvement" />
+                    </div>
+                </div>
+
+                {/* 3. Stats & Skills */}
+                <div className="lg:col-span-5 flex flex-col gap-6">
+                    {/* Top Bento Row */}
+                    <div className="grid grid-cols-2 gap-4">
+                        <KpiCard title="Efficiency" value="98%" icon={Zap} bg="lime" />
+                        <KpiCard title="Level" value="04" icon={User} bg="black" subtext="Senior Intern" />
+                        <div className="col-span-2">
+                            <div className="bg-white rounded-[32px] p-6 shadow-sm border border-white h-full flex items-center justify-between group cursor-pointer hover:shadow-md transition-shadow">
+                                <div className="flex items-center gap-4">
+                                    <div className="w-12 h-12 rounded-full bg-gray-50 flex items-center justify-center text-gray-400 group-hover:bg-[#ccff00] group-hover:text-black transition-colors">
+                                        <Target size={20} />
+                                    </div>
+                                    <div>
+                                        <p className="font-bold text-lg">Weekly Goals</p>
+                                        <p className="text-xs text-gray-400">4 tasks remaining</p>
+                                    </div>
+                                </div>
+                                <div className="w-12 h-12 rounded-full border border-gray-100 flex items-center justify-center group-hover:border-[#ccff00] transition-colors">
+                                    <ChevronDown size={20} className="-rotate-90 text-gray-300 group-hover:text-black" />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-
-            {/* ─── BOTTOM ROW: 4 Cards ────────────────────── */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-
-                {/* Card 1: Track Progress */}
-                <GlassCard className="flex flex-col justify-between min-h-[260px]">
-                    <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-gray-700">Track Progress</span>
-                        <ArrowUpRight size={18} className="text-gray-400" />
-                    </div>
-                    <div className="flex justify-center py-4">
-                        <GaugeArc value={68} size={150} color="#3b82f6" />
-                    </div>
-                    <div className="grid grid-cols-2 gap-4 mt-auto pt-5 border-t border-black/5">
-                        <div>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase">Completion</p>
-                            <p className="text-lg font-black text-gray-900">68%</p>
-                        </div>
-                        <div>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase">Target</p>
-                            <p className="text-lg font-black text-gray-900">12:45 <span className="text-xs text-gray-400 font-bold">PM</span></p>
-                        </div>
-                    </div>
-                </GlassCard>
-
-                {/* Card 2: Module Balance */}
-                <GlassCard className="flex flex-col justify-between min-h-[260px]">
-                    <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-gray-700">Module Balance</span>
-                        <ArrowUpRight size={18} className="text-gray-400" />
-                    </div>
-
-                    <div className="flex justify-center py-4 relative">
-                        <GaugeArc value={75} max={100} size={150} color="#10b981" />
-                    </div>
-
-                    <div className="grid grid-cols-2 gap-4 mt-auto pt-5 border-t border-black/5">
-                        <div>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase">Done</p>
-                            <p className="text-lg font-black text-gray-900">6.3</p>
-                        </div>
-                        <div>
-                            <p className="text-[10px] text-gray-400 font-bold uppercase">Left</p>
-                            <p className="text-lg font-black text-gray-900">4.5</p>
-                        </div>
-                    </div>
-                </GlassCard>
-
-                {/* Card 3: Scores */}
-                <GlassCard className="!bg-white/95 flex flex-col justify-between min-h-[260px]">
-                    <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-gray-700">Scores</span>
-                        <ArrowUpRight size={18} className="text-gray-400" />
-                    </div>
-                    <div className="space-y-4 mb-4 flex-1">
-                        {[
-                            { label: 'Quality', value: '85', unit: 'pts' },
-                            { label: 'Collab', value: '92', unit: 'pts' },
-                            { label: 'Init.', value: '+4.5', unit: 'pts' },
-                        ].map((row, i) => (
-                            <div key={i} className="flex justify-between items-baseline border-b border-gray-100 last:border-0 pb-2 last:pb-0">
-                                <span className="text-xs text-gray-500 font-bold uppercase">{row.label}</span>
-                                <span className="text-lg font-black text-gray-900">{row.value}</span>
-                            </div>
-                        ))}
-                    </div>
-                    {/* Mini chart */}
-                    <div className="rounded-xl p-3 bg-gray-50 mt-auto">
-                        <div className="flex items-center gap-2 mb-2">
-                            <span className="w-1.5 h-1.5 rounded-full bg-red-400" />
-                            <span className="text-[9px] text-gray-400 font-bold uppercase">Weekly Trend</span>
-                        </div>
-                        <MiniBarGraph data={[70, 75, 65, 80, 85, 78, 90, 82, 88]} height={50} highlight={8} />
-                    </div>
-                </GlassCard>
-
-                {/* Card 4: Performance (formerly Schedule) */}
-                <GlassCard className="flex flex-col justify-between min-h-[260px]">
-                    <div className="flex items-center justify-between mb-4">
-                        <span className="text-sm font-bold text-gray-700">Performance</span>
-                        <ArrowUpRight size={18} className="text-gray-400" />
-                    </div>
-                    <div className="flex items-center gap-4 mb-4">
-                        <div className="scale-90 origin-left">
-                            <DonutChart percentage={85} size={90} strokeWidth={8} />
-                        </div>
-                        <div className="flex-1">
-                            <p className="text-[10px] text-gray-500 font-bold uppercase">Avg. Score</p>
-                            <p className="text-2xl font-black text-gray-900">85</p>
-                        </div>
-                    </div>
-                    <div className="mt-auto">
-                        <div className="flex items-center gap-2 mb-2">
-                            <div className="w-1.5 h-1.5 rounded-full bg-orange-400" />
-                            <span className="text-[9px] text-gray-400 font-bold uppercase">Activity</span>
-                        </div>
-                        <MiniBarGraph data={weeklyData} highlight={9} height={60} />
-                    </div>
-                </GlassCard>
-            </div>
-        </div>
+        </div >
     );
 };
 

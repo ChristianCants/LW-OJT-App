@@ -28,6 +28,18 @@ export const customSignIn = async (username, password) => {
   return { data, error };
 };
 
+// Sign in using email (Gmail) from profile
+export const customSignInByEmail = async (email, password) => {
+  const { data, error } = await supabase
+    .from('profiles')
+    .select('*')
+    .eq('email', email.trim().toLowerCase())
+    .eq('password', password)
+    .single();
+
+  return { data, error };
+};
+
 
 // Admin Auth using Supabase Auth
 export const adminSignIn = async (email, password) => {

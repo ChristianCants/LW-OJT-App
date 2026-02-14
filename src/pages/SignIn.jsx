@@ -1,11 +1,11 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { customSignIn } from '../services';
+import { customSignIn, customSignInByEmail } from '../services';
 import FluidGlass from '../components/FluidGlass';
 
 
 const SignIn = () => {
-    const [username, setUsername] = useState('');
+    const [identifier, setIdentifier] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
@@ -17,15 +17,24 @@ const SignIn = () => {
         setLoading(true);
         setError(null);
 
-        const { data, error } = await customSignIn(username, password);
+        const isEmail = identifier.includes('@');
+        let result;
 
-        if (error) {
+        if (isEmail) {
+            // Login with email
+            result = await customSignInByEmail(identifier, password);
+        } else {
+            // Login with username
+            result = await customSignIn(identifier, password);
+        }
+
+        const { data, error } = result;
+
+        if (error || !data) {
             setError("Login failed. Please check your credentials.");
-        } else if (data) {
+        } else {
             localStorage.setItem('user', JSON.stringify(data));
             navigate(data.role === 'admin' ? '/admin/dashboard' : '/dashboard');
-        } else {
-            setError("Invalid username or password");
         }
         setLoading(false);
     };
@@ -80,13 +89,13 @@ const SignIn = () => {
 
                     <form onSubmit={handleSignIn} className="space-y-5">
                         <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-[#888] ml-1">USERNAME</label>
+                            <label className="text-xs font-medium text-[#888] ml-1">USERNAME OR EMAIL</label>
                             <input
                                 type="text"
-                                value={username}
-                                onChange={(e) => setUsername(e.target.value)}
+                                value={identifier}
+                                onChange={(e) => setIdentifier(e.target.value)}
                                 className="w-full px-4 py-3 bg-[#1a1a1a] border border-[#333] rounded-xl text-white placeholder-gray-600 focus:outline-none focus:border-white/40 focus:ring-0 transition-all"
-                                placeholder="Enter your username"
+                                placeholder="Enter your username or email"
                                 required
                             />
                         </div>
