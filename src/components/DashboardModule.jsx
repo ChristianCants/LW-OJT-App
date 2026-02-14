@@ -335,7 +335,7 @@ const DashboardModule = ({ user, onProfileUpdate }) => {
             {/* ── Edit Profile Modal (Portal) ── */}
             {isEditing && createPortal(
                 <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/60 backdrop-blur-md p-4 animate-in fade-in duration-300">
-                    <div className="bg-[#0a0a0a] w-full max-w-md max-h-[90vh] overflow-y-auto custom-scrollbar rounded-[40px] border border-white/10 p-8 relative shadow-2xl animate-in zoom-in-95 duration-300">
+                    <div className="bg-[#0a0a0a] w-full max-w-md max-h-[90vh] overflow-hidden rounded-[40px] border border-white/10 p-8 relative shadow-2xl animate-in zoom-in-95 duration-300">
                         {/* Glow Effect */}
                         <div className="absolute -top-20 -right-20 w-64 h-64 bg-[#ccff00] blur-[120px] opacity-10 pointer-events-none" />
 
@@ -491,7 +491,19 @@ const DashboardModule = ({ user, onProfileUpdate }) => {
 
             {/* ── Hero Section (Premium Black Card) ── */}
             <div className="w-full bg-[#050505] rounded-[48px] p-10 relative overflow-hidden mb-10 shadow-2xl shadow-black/20 group">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#111] to-black" />
+                {/* Background Video */}
+                <video
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="absolute inset-0 w-full h-full object-cover pointer-events-none"
+                    style={{ filter: 'invert(1)', opacity: 0.35 }}
+                >
+                    <source src="/Background.mp4" type="video/mp4" />
+                </video>
+                {/* Dark overlay for readability */}
+                <div className="absolute inset-0 bg-gradient-to-br from-black/50 via-black/30 to-transparent" />
                 <div className="absolute top-0 right-0 w-[600px] h-[600px] bg-[#ccff00] blur-[150px] opacity-[0.07] rounded-full pointer-events-none group-hover:opacity-[0.1] transition-opacity duration-700" />
                 <div className="absolute bottom-0 left-20 w-[300px] h-[300px] bg-blue-500 blur-[120px] opacity-[0.05] rounded-full pointer-events-none" />
 
